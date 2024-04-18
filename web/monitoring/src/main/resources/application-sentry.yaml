@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+sentry:
+  enabled: false
+  environment: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+sentry:
+  enabled: true
+  environment: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+sentry:
+  enabled: true
+  environment: prod
