@@ -1,9 +1,6 @@
 package com.aireview.domain.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,12 @@ public class User {
     private String name;
     private String nickname;
     private String email;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public enum Status {
+        ENABLED, DISABLED;
+    }
 
     @Builder
     public User(Long id, String name, String nickname, String email) {
@@ -25,5 +28,6 @@ public class User {
         this.name = name;
         this.nickname = nickname;
         this.email = email;
+        this.status = Status.ENABLED;
     }
 }
