@@ -1,4 +1,4 @@
-package com.aireview.domain.user;
+package com.aireview.review.domain.user;
 
 import jakarta.persistence.*;
 import lombok.Builder;

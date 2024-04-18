@@ -1,7 +1,7 @@
-package com.aireview.domain;
+package com.aireview.review.domain.user;
 
-import com.aireview.domain.user.User;
-import com.aireview.domain.user.UserRepository;
+import com.aireview.review.domain.user.User;
+import com.aireview.review.domain.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
