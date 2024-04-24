@@ -13,13 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
- class UserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
     @Test
     void 유저가_등록된다() {
-        //given
         User user = User.builder()
                 .name("홍길동")
                 .nickname("hongs")
@@ -27,9 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
                 .build();
         userRepository.save(user);
 
-        Optional<User> persistedUser = userRepository.findAll()
-                .stream()
-                .findFirst();
+        Optional<User> persistedUser = userRepository.findById(user.getId());
         assertThat(persistedUser.get())
                 .isNotNull()
                 .isEqualTo(user);
