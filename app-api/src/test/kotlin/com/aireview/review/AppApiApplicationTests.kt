@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
+@ActiveProfiles("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class AppApiApplicationTests(
     @LocalServerPort private val port: Int,
@@ -21,18 +23,15 @@ internal class AppApiApplicationTests(
     }
 
     @Test
-    @Transactional
     fun 유저를_등록한다() {
-        val por: Int = 8080
         val userId = restTemplate.postForObject(
-            "http://localhost:${port}/v1/users",
-            CreateUserReqDto("홍길동", "hong@email.com", "hongs"),
+            "http://localhost:$port/v1/users",
+            CreateUserReqDto("홍길동", "hong@gmail.com", "hongs"),
             Long::class.java
         )
         val user = restTemplate.getForObject(
-            "http://localhost:${port}/v1/users/{userId}",
-            User::class.java,
-            userId
+            "http://localhost:$port/v1/users/$userId",
+            User::class.java
         )
         assertThat(user).isNotNull
         assertThat(user!!.id).isNotNull()
