@@ -18,3 +18,18 @@ services:
       - "mysqld"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
+
+  ngrinder.controller:
+    container_name: ngrinder_ai_review_controller
+    image: ngrinder/controller:latest
+    platform: linux/amd64
+    ports:
+      - "9000:80"
+      - "16001:16001"
+      - "12000-12009:12000-12009"
+  ngrinder.agent:
+    container_name: ngrinder_ai_review_agent
+    platform: linux/amd64
+    image: ngrinder/agent:latest
+    command:
+      - '127.0.0.1:9000'

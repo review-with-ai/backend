@@ -164,6 +164,8 @@ fabric.properties
 
 # docker volumne
 mysql/
+# ngrinder agent 컨테이너 실행 오류시 사용하기 위한 ngrinder agent 폴더
+ngrinder-agent/
 
 # application property
 **/application-secret.yaml
