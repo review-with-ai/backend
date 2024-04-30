@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: db
+    include: db, secret
 ---
 spring:
   config:
@@ -9,6 +9,8 @@ spring:
   devtools:
     restart:
       enabled: false
+    livereload:
+      enabled: true
 logging:
   level:
     root: INFO
