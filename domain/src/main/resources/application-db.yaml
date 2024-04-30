@@ -6,6 +6,10 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/ai_review
     username: review
     password: review
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 3
+      connection-timeout: 2000
   jpa:
     generate-ddl: false
     hibernate:
@@ -17,6 +21,7 @@ spring:
     open-in-view: true
   flyway:
     enabled: true
+    validateMigrationNaming: true
 ---
 spring:
   config:
