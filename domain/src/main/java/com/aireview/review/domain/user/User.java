@@ -14,6 +14,7 @@ public class User {
     private Long id;
     private String name;
     private String nickname;
+    private String password;
     private String email;
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -22,12 +23,16 @@ public class User {
         ENABLED, DISABLED;
     }
 
-    @Builder
-    public User(Long id, String name, String nickname, String email) {
+    public User(String name, String nickname, String email, String password) {
+        this(null, name, nickname, password, email, Status.ENABLED);
+    }
+
+    public User(Long id, String name, String nickname, String password, String email, Status status) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
+        this.password = password;
         this.email = email;
-        this.status = Status.ENABLED;
+        this.status = status;
     }
 }
