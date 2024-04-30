@@ -11,6 +11,14 @@ spring:
       enabled: false
     livereload:
       enabled: true
+server:
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 10
+    max-connections: 100
+    accept-count: 10
+    connection-timeout: 2000
 logging:
   level:
     root: INFO
