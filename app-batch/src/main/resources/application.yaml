@@ -1,9 +1,4 @@
 spring:
-  profiles:
-    active: local
-    include: db, sentry
----
-spring:
   config:
     activate:
       on-profile: local
