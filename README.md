@@ -75,6 +75,11 @@ docker-compose up -d
 ./ngrinder-agent/run_agent.sh
 ```
 
+# 코딩 컨벤션
+
+- POSIX를 준수하기 위해 모든 파일 끝에 newline을 추가하도록 한다.
+    - intellij 설정 ``General > Editor > ensure every saved file ends with a line break``` 을 통해 실수를 방지한다.
+
 # API 설계 규칙
 
 - URL을 구성할 때 맨 앞에 버전을 명시한다 ex) /api/v1/...
@@ -105,9 +110,11 @@ docker-compose up -d
   에러가 반환된다.
 
 # 인증
+
 - /api/v1/account/login을 통해 로그인을 요청하면 username, password를 사용해 로그인한 후 jwt 토큰을 응답으로 반환한다.
 - 인증 사용자용 API를 호출할때는 요청 헤더에 X-AIREVIEW-AUTH 항곰을 추가하고, 값으로 로그인 후 전달받은 `token`에 `Bearer` 키워드를 붙여 입력한다.
-  - JwtAuthenticationTokenFilter는 HTTP 요청 헤더에서 JWT 값을 추출하고 해당 값이 올바르다면 인증된 사용자 정보(JwtAuthenticationToken)을
+    - JwtAuthenticationTokenFilter는 HTTP 요청 헤더에서 JWT 값을 추출하고 해당 값이 올바르다면 인증된 사용자 정보(JwtAuthenticationToken)을
+
 ```json
 curl --request GET 'http://localhost:8080/api/v1/users/me' \
 --header 'Accept: application/json' \
