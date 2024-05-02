@@ -1,0 +1,62 @@
+spring:
+  profiles:
+    include: db, secret
+management:
+  server:
+    port: 8081
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: "/manage"
+      exposure:
+        include: "health"
+    jmx:
+      exposure:
+        exclude: "*"
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+  health:
+    diskspace:
+      enabled: false
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: true
+server:
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 10
+    max-connections: 100
+    accept-count: 10
+    connection-timeout: 2000
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web: DEBUG
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+---
+
