@@ -11,14 +11,14 @@ spring:
       minimum-idle: 3
       connection-timeout: 2000
   jpa:
-    generate-ddl: false
+    generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         show_sql: true
         format_sql: true
-    open-in-view: true
+    open-in-view: false
   flyway:
     enabled: true
     validateMigrationNaming: true
@@ -27,30 +27,8 @@ spring:
   config:
     activate:
       on-profile: dev
-  datasource:
-    url:
-    username:
-    password:
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    open-in-view: true
-  flyway:
-    enabled: true
 ---
 spring:
   config:
     activate:
       on-profile: prod
-  datasource:
-    url:
-    username:
-    password:
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    open-in-view: true
-  flyway:
-    enabled: false
