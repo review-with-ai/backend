@@ -1,4 +1,4 @@
-package com.aireview.review.config.security;
+package com.aireview.review.model;
 
 public enum Role {
     USER("ROLE_USER");

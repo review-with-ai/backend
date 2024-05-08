@@ -1,4 +1,4 @@
-package com.aireview.review.config.security;
+package com.aireview.review.authentication.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

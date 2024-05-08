@@ -19,11 +19,7 @@ class UserRepositoryTest {
 
     @Test
     void 유저가_등록된다() {
-        User user = User.builder()
-                .name("홍길동")
-                .nickname("hongs")
-                .email("hong@gmail.com")
-                .build();
+        User user = new User( "홍길동", "hongs", "hong@gmail.com", "hong1234");
         userRepository.save(user);
 
         Optional<User> persistedUser = userRepository.findById(user.getId());

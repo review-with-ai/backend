@@ -1,16 +1,18 @@
-package com.aireview.review.model;
+package com.aireview.review.authentication.jwt;
 
 
-import com.aireview.review.config.security.Role;
 import com.aireview.review.domain.user.User;
+import com.aireview.review.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 public class CustomUserDetails implements UserDetails {
