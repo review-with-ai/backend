@@ -1,5 +1,6 @@
-package com.aireview.review.config.security;
+package com.aireview.review.authentication.jwt;
 
+import com.aireview.review.authentication.CustomAuthenticatedPrincipal;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,7 +25,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("jwt token is not valid");
         }
         return JwtAuthenticationToken.authenticated(
-                new AuthenticatedPrincipal(claims.userkey(), claims.username()),
+                new CustomAuthenticatedPrincipal(claims.userkey(), claims.username()),
                 AuthorityUtils.createAuthorityList(claims.roles())
         );
     }

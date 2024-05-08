@@ -1,4 +1,4 @@
-package com.aireview.review.config.security;
+package com.aireview.review.authentication.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

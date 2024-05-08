@@ -1,4 +1,4 @@
-package com.aireview.review.config.security;
+package com.aireview.review.authentication.jwt;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
