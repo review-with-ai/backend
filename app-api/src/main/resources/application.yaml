@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: db, secret
+    include: db, secret, oauth
 management:
   server:
     port: 8081
@@ -44,6 +44,7 @@ logging:
     org:
       springframework:
         web: DEBUG
+        security: DEBUG
       hibernate:
         type:
           descriptor:
