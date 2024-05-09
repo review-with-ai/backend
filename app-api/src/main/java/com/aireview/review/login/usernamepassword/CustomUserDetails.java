@@ -1,20 +1,19 @@
-package com.aireview.review.login;
+package com.aireview.review.login.usernamepassword;
 
 
 import com.aireview.review.domain.user.User;
+import com.aireview.review.login.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 
-public class LoginUser implements OAuth2User, UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     @Getter
     private Long userId;
@@ -26,25 +25,20 @@ public class LoginUser implements OAuth2User, UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    private Map<String, Object> attributes;
-
-    public LoginUser(
+    public CustomUserDetails(
             Long userId,
-            String email,
+            String username,
             String password,
             Collection<? extends GrantedAuthority> authorities
     ) {
         this.userId = userId;
-        this.email = username;
+        this.username = username;
         this.password = password;
         this.authorities = authorities;
     }
 
-    public LoginUser(Map<String, Object> attributes, Collection<? extends GrantedAuthority> authorities) {
-        this(userk)
-    }
 
-    public LoginUser(User user) {
+    public CustomUserDetails(User user) {
         this(user.getId(), user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(Role.USER.value())));
     }
 
@@ -81,15 +75,5 @@ public class LoginUser implements OAuth2User, UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    @Override
-    public String getName() {
-        return username;
     }
 }
