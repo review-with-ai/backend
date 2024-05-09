@@ -1,8 +1,7 @@
-package com.aireview.review.authentication.jwt;
+package com.aireview.review.login;
 
 
 import com.aireview.review.domain.user.User;
-import com.aireview.review.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,19 +14,38 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CustomUserDetails implements UserDetails {
+public class LoginUser implements OAuth2User, UserDetails {
+
     @Getter
-    private final Long userKey;
-    private final String username;
+    private Long userId;
+
+    private String username;
+
     @JsonIgnore
-    private final String password;
+    private String password;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(User user) {
-        this.userKey = user.getId();
-        this.username = user.getEmail();
-        this.password = user.getPassword();
-        this.authorities = List.of(new SimpleGrantedAuthority(Role.USER.value()));
+    private Map<String, Object> attributes;
+
+    public LoginUser(
+            Long userId,
+            String email,
+            String password,
+            Collection<? extends GrantedAuthority> authorities
+    ) {
+        this.userId = userId;
+        this.email = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public LoginUser(Map<String, Object> attributes, Collection<? extends GrantedAuthority> authorities) {
+        this(userk)
+    }
+
+    public LoginUser(User user) {
+        this(user.getId(), user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(Role.USER.value())));
     }
 
     @Override
@@ -63,5 +81,15 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 }
