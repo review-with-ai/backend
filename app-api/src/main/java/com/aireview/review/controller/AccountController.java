@@ -1,9 +1,8 @@
 package com.aireview.review.controller;
 
-import com.aireview.review.config.security.AuthenticatedPrincipal;
-import com.aireview.review.config.security.Jwt;
+import com.aireview.review.authentication.CustomAuthenticatedPrincipal;
+import com.aireview.review.authentication.jwt.Jwt;
 import com.aireview.review.domain.user.User;
-import com.aireview.review.model.CustomUserDetails;
 import com.aireview.review.model.JoinRequest;
 import com.aireview.review.model.LoginRequest;
 import com.aireview.review.model.LoginResponse;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +28,7 @@ public class AccountController {
     private final UserService userService;
 
     @PostMapping("/login")
+    @Deprecated
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.unauthenticated(
                 request.getUsername(),
@@ -37,14 +36,14 @@ public class AccountController {
 
         Authentication result = authenticationManager.authenticate(authentication);
 
-        AuthenticatedPrincipal principal = (AuthenticatedPrincipal) result.getPrincipal();
+        CustomAuthenticatedPrincipal principal = (CustomAuthenticatedPrincipal) result.getPrincipal();
 
         String token = jwt.create(Jwt.Claims.of(
-                principal.getId(),
-                principal.getEmail(),
+                principal.id(),
+                principal.email(),
                 result.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new)));
 
-        return new LoginResponse(token, principal.getId());
+        return new LoginResponse(token, principal.id());
     }
 
     @PostMapping
