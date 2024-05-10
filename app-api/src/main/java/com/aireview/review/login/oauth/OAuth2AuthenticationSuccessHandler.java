@@ -32,13 +32,13 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String oauthProvider = oauthAuthentication.getAuthorizedClientRegistrationId();
         OAuth2User oauth2User = oauthAuthentication.getPrincipal();
 
-        // TODO: 5/9/24 유저 저장시 createdAt, updatedAt null 로 update 안됨. auditing listener 동작하지 않음.
         Optional<User> oauthUser = userService.findOauthUser(oauthProvider, oauth2User.getName());
         User user = oauthUser
                 .orElseGet(() -> persistUser(oauthProvider, oauth2User));
 
 
         String token = jwt.createJwt(user.getId(), user.getEmail(), oauth2User.getAuthorities());
+
         response.setContentType(MediaType.APPLICATION_JSON.getType());
         response.getWriter().write(
                 objectMapper.writeValueAsString(new LoginResponse(token, user.getId()))
