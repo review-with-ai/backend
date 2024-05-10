@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -80,6 +81,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/coupon/fcfs").hasRole(Role.USER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -128,10 +130,15 @@ public class SecurityConfiguration {
     public JsonUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(
             AuthenticationManager manager,
             UsernamePasswordAuthenticationSuccessHandler usernamePasswordAuthenticationSuccessHandler,
-            LoginFailureHandler loginFailureHandler
+            LoginFailureHandler loginFailureHandler,
+            MappingJackson2HttpMessageConverter jsonMessageConverter
     ) {
-        return new JsonUsernamePasswordAuthenticationFilter(manager, usernamePasswordAuthenticationSuccessHandler, loginFailureHandler);
+        return new JsonUsernamePasswordAuthenticationFilter(
+                manager,
+                usernamePasswordAuthenticationSuccessHandler,
+                loginFailureHandler,
+                jsonMessageConverter
+        );
     }
-
 
 }
