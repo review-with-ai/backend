@@ -3,7 +3,6 @@ package com.aireview.review.login.usernamepassword;
 import com.aireview.review.authentication.jwt.Jwt;
 import com.aireview.review.login.LoginResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,21 +22,15 @@ public class UsernamePasswordAuthenticationSuccessHandler implements Authenticat
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        CustomUserDetails user = (CustomUserDetails) authentication.getDetails();
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
         String token = jwt.createJwt(user.getUserId(), user.getUsername(), user.getAuthorities());
 
-        response.setContentType(MediaType.APPLICATION_JSON.getType());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(
                 objectMapper.writeValueAsString(new LoginResponse(token, user.getUserId()))
         );
         response.getWriter().flush();
         response.getWriter().close();
-    }
-
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
     }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,8 @@ public class CustomUserDetails implements UserDetails {
             String password,
             Collection<? extends GrantedAuthority> authorities
     ) {
+        Assert.isTrue(userId != null && username != null && password != null && authorities != null
+                , "user must be provided");
         this.userId = userId;
         this.username = username;
         this.password = password;

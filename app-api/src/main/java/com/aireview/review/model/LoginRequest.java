@@ -3,6 +3,7 @@ package com.aireview.review.model;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
+@Deprecated
 @Getter
 public class LoginRequest {
     @NotBlank(message= "username must be provided")
