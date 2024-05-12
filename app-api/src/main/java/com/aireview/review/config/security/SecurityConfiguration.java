@@ -9,18 +9,20 @@ import com.aireview.review.login.Role;
 import com.aireview.review.login.oauth.OAuth2AuthenticationSuccessHandler;
 import com.aireview.review.login.usernamepassword.JsonUsernamePasswordAuthenticationFilter;
 import com.aireview.review.login.usernamepassword.UsernamePasswordAuthenticationSuccessHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,6 +39,8 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    @Value("${spring.security.debug:false}")
+    private boolean debugEnabled;
 
     @Bean
     @Order(1)
@@ -82,6 +86,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/coupon/fcfs").hasRole(Role.USER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -95,21 +100,21 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public JwtAuthenticationFilter jwtFilter(JwtConfig jwtConfig, Jwt jwt, AuthenticationManager authenticationManager) {
-        return new JwtAuthenticationFilter(jwtConfig.getHeader(), jwt, authenticationManager);
+    public JwtAuthenticationFilter jwtFilter(JwtConfig jwtConfig, JwtService jwtService, AuthenticationManager authenticationManager) {
+        return new JwtAuthenticationFilter(jwtConfig.getHeader(), jwtService, authenticationManager);
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder,
-            Jwt jwt
+            JwtService jwtService
     ) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
-        JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwt);
+        JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtService);
 
         ProviderManager providerManager = new ProviderManager(List.of(daoAuthenticationProvider, jwtAuthenticationProvider));
         providerManager.setEraseCredentialsAfterAuthentication(true);
@@ -139,6 +144,12 @@ public class SecurityConfiguration {
                 loginFailureHandler,
                 jsonMessageConverter
         );
+    }
+
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.debug(debugEnabled);
     }
 
 }

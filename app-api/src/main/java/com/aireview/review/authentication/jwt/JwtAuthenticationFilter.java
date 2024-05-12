@@ -27,21 +27,21 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final String headerKey;
 
-    private final Jwt jwt;
+    private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
 
 
-    public JwtAuthenticationFilter(String headerKey, Jwt jwt, AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(String headerKey, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.headerKey = headerKey;
-        this.jwt = jwt;
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
 
     @Override
     public void afterPropertiesSet() throws ServletException {
         Assert.notNull(this.headerKey, "HeaderKey is required");
-        Assert.notNull(this.jwt, "jwt is required ");
+        Assert.notNull(this.jwtService, "jwt is required ");
         Assert.notNull(this.authenticationManager, "authenticationManager is required");
     }
 
