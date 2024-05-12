@@ -1,6 +1,8 @@
 package com.aireview.review.login.oauth;
 
 
+import org.springframework.util.Assert;
+
 public class OAuth2UserInfo {
 
     private String name;
@@ -14,6 +16,11 @@ public class OAuth2UserInfo {
     private String oauthProvider;
 
     public OAuth2UserInfo(String name, String nickname, String email, String oauthUserId, String oauthProvider) {
+        Assert.notNull(name, "oauth user register failed - name null ");
+        Assert.notNull(nickname, "oauth user register failed - nickname null ");
+        Assert.notNull(email, "oauth user register failed - email null ");
+        Assert.notNull(oauthUserId, "oauth user register failed - id null ");
+
         this.name = name;
         this.nickname = nickname;
         this.email = email;

@@ -1,42 +1,37 @@
 package com.aireview.review.login.oauth;
 
-import org.springframework.util.Assert;
-
 import java.util.Map;
 
 public enum OAuth2UserAttributeConverter {
-    NAVER("naver") {
+    NAVER {
         @Override
         public OAuth2UserInfo from(Map<String, Object> attributes) {
             Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
-            String name = (String) response.getOrDefault("name", null);
-            Assert.notNull(name, "oauth user register failed - name null ");
+            return new OAuth2UserInfo(
+                    (String) response.get("name"),
+                    (String) response.get("nickname"),
+                    (String) response.get("email"),
+                    (String) response.get("oauthUserId"),
+                    this.name());
 
-            String nickname = (String) response.getOrDefault("nickname", null);
-            Assert.notNull(nickname, "oauth user register failed - nickname null ");
-
-            String email = (String) response.getOrDefault("email", null);
-            Assert.notNull(email, "oauth user register failed - email null ");
-
-            String oauthUserId = (String) response.getOrDefault("id", null);
-            Assert.notNull(oauthUserId, "oauth user register failed - id null ");
-
-            return new OAuth2UserInfo(name, nickname, email, oauthUserId, oauthProvider);
+        }
+    },
+    KAKAO {
+        @Override
+        protected OAuth2UserInfo from(Map<String, Object> attributes) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            return new OAuth2UserInfo(
+                    (String) kakaoAccount.get("name"),
+                    (String) profile.get("nickname"),
+                    (String) kakaoAccount.get("email"),
+                    attributes.get("id").toString(),
+                    this.name());
         }
     };
-    // TODO: 5/9/24 KAKAO 추가 필요
-    String oauthProvider;
 
     protected abstract OAuth2UserInfo from(Map<String, Object> attributes);
-
-    OAuth2UserAttributeConverter(String oauthProvider) {
-        this.oauthProvider = oauthProvider;
-    }
-
-    public String getOauthProvider() {
-        return oauthProvider;
-    }
 
     public static OAuth2UserInfo getUserInfoFromOAuth2UserAttribute(String registrationId, Map<String, Object> oauthAttributes) {
         OAuth2UserAttributeConverter converter = OAuth2UserAttributeConverter.valueOf(registrationId.toUpperCase());
