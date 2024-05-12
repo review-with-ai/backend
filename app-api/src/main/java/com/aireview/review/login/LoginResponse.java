@@ -4,11 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class LoginResponse {
-    private final String token;
+    private final String accessToken;
+    private final String refreshToken;
     private final Long userId;
 
-    public LoginResponse(String token, Long userId) {
-        this.token = token;
+    public LoginResponse(String accessToken, String refreshToken, Long userId) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.userId = userId;
     }
 }

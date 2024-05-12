@@ -15,9 +15,12 @@ import java.util.List;
 
 
 public class CustomUserDetails implements UserDetails {
+    @Getter
+    private User user;
 
     @Getter
     private Long userId;
+
 
     private String username;
 
@@ -27,13 +30,15 @@ public class CustomUserDetails implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(
+            User user,
             Long userId,
             String username,
             String password,
             Collection<? extends GrantedAuthority> authorities
     ) {
-        Assert.isTrue(userId != null && username != null && password != null && authorities != null
+        Assert.isTrue(user != null && userId != null && username != null && password != null && authorities != null
                 , "user must be provided");
+        this.user = user;
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -42,7 +47,7 @@ public class CustomUserDetails implements UserDetails {
 
 
     public CustomUserDetails(User user) {
-        this(user.getId(), user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(Role.USER.value())));
+        this(user, user.getId(), user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(Role.USER.value())));
     }
 
     @Override

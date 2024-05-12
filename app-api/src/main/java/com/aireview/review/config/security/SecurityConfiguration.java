@@ -1,6 +1,6 @@
 package com.aireview.review.config.security;
 
-import com.aireview.review.authentication.jwt.Jwt;
+import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.authentication.jwt.JwtAuthenticationFilter;
 import com.aireview.review.authentication.jwt.JwtAuthenticationProvider;
 import com.aireview.review.authentication.jwt.JwtConfig;
@@ -67,7 +67,6 @@ public class SecurityConfiguration {
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         .failureHandler(loginFailureHandler))
                 .addFilterAfter(usernamePasswordAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
-
 
         return http.build();
     }
@@ -136,13 +135,13 @@ public class SecurityConfiguration {
             AuthenticationManager manager,
             UsernamePasswordAuthenticationSuccessHandler usernamePasswordAuthenticationSuccessHandler,
             LoginFailureHandler loginFailureHandler,
-            MappingJackson2HttpMessageConverter jsonMessageConverter
+            ObjectMapper objectMapper
     ) {
         return new JsonUsernamePasswordAuthenticationFilter(
                 manager,
                 usernamePasswordAuthenticationSuccessHandler,
                 loginFailureHandler,
-                jsonMessageConverter
+                objectMapper
         );
     }
 
