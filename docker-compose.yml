@@ -3,6 +3,7 @@ version: '3'
 services:
   mysql:
     container_name: mysql_ai_review
+    platform: linux/amd64
     image: mysql/mysql-server:8.0
     ports:
       - "3306:3306"
@@ -19,17 +20,12 @@ services:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
 
-  ngrinder.controller:
-    container_name: ngrinder_ai_review_controller
-    image: ngrinder/controller:latest
+  redis:
+    container_name: redis_ai_review
     platform: linux/amd64
+    image: redis:6.2.6-alpine
     ports:
-      - "9000:80"
-      - "16001:16001"
-      - "12000-12009:12000-12009"
-  ngrinder.agent:
-    container_name: ngrinder_ai_review_agent
-    platform: linux/amd64
-    image: ngrinder/agent:latest
-    command:
-      - '127.0.0.1:9000'
+      - "6379:6379"
+
+
+
