@@ -1,6 +1,7 @@
 package com.aireview.review.login.usernamepassword;
 
 import com.aireview.review.authentication.CustomAuthenticatedPrincipal;
+import com.aireview.review.login.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;

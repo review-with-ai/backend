@@ -97,7 +97,6 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-
     @Bean
     public JwtAuthenticationFilter jwtFilter(JwtConfig jwtConfig, JwtService jwtService, AuthenticationManager authenticationManager) {
         return new JwtAuthenticationFilter(jwtConfig.getHeader(), jwtService, authenticationManager);

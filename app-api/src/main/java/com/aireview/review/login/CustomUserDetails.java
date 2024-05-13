@@ -1,8 +1,7 @@
-package com.aireview.review.login.usernamepassword;
+package com.aireview.review.login;
 
 
 import com.aireview.review.domain.user.User;
-import com.aireview.review.login.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

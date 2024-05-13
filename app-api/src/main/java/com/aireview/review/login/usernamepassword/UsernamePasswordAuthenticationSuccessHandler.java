@@ -2,6 +2,7 @@ package com.aireview.review.login.usernamepassword;
 
 import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.domain.user.User;
+import com.aireview.review.login.CustomUserDetails;
 import com.aireview.review.login.LoginSuccessHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
