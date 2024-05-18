@@ -1,7 +1,8 @@
-package com.aireview.review.model;
+package com.aireview.review.login;
 
 public enum Role {
-    USER("ROLE_USER");
+    USER("ROLE_USER"),
+    OAUTH_USER("ROLE_OAUTH_USER");
     private final String value;
 
     Role(String value) {
