@@ -3,6 +3,7 @@ package com.aireview.review.model;
 
 import lombok.Getter;
 
+@Deprecated
 @Getter
 public class LoginResponse {
     private final String token;

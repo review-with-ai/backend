@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: db, secret
+    include: db, secret, oauth
 management:
   server:
     port: 8081
@@ -30,6 +30,18 @@ spring:
       enabled: false
     livereload:
       enabled: true
+  security:
+    debug: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+  session:
+    store-type: redis
+    redis:
+      namespace: aireview:session
+    timeout: 3600
 server:
   tomcat:
     threads:
