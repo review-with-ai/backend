@@ -11,7 +11,12 @@ import org.springframework.security.core.authority.AuthorityUtils;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
+
     private final JwtService jwtService;
+
+    private final String ACCESS_TOKEN_EXPIRED_MESSAGE = "access token has expired";
+
+    private final String ACCESS_TOKEN_VERIFICATION_MESSAGE = "access token is not valid";
 
 
     @Override
@@ -21,9 +26,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             claims = jwtService.verify((String) authentication.getCredentials());
 
         } catch (TokenExpiredException ex) {
-            throw new BadCredentialsException("jwt token has expired");
+            throw new BadCredentialsException(ACCESS_TOKEN_EXPIRED_MESSAGE);
         } catch (JWTVerificationException ex) {
-            throw new BadCredentialsException("jwt token is not valid");
+            throw new BadCredentialsException(ACCESS_TOKEN_VERIFICATION_MESSAGE);
         }
 
         return JwtAuthenticationToken.authenticated(
