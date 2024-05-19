@@ -1,5 +1,7 @@
 package com.aireview.review.authentication.jwt;
 
+import com.aireview.review.exception.BaseException;
+import com.aireview.review.exception.ErrorCode;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -60,16 +62,16 @@ public class JwtService {
         try {
             Claims claims = verify(refreshToken);
             String originalRefreshToken = refreshTokenRepository.findById(userId)
-                    .orElseThrow(() -> new BadRequestException("refresh token not exists"));
+                    .orElseThrow(() -> new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR));
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(userId);
-                throw new BadRequestException("re-login is required. refresh token may have been hijacked");
+                throw new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR);
             }
             return createJwt(claims.userKey, claims.email, claims.roles);
         } catch (TokenExpiredException expiredException) {
-            throw new BadRequestException("refresh token has been expired. re-login is required");
+            throw new BaseException(ErrorCode.REFRESH_TOKEN_EXPIRED_ERROR);
         } catch (JWTVerificationException jwtVerificationException) {
-            throw new BadRequestException("refresh token is not valid");
+            throw new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR);
         }
     }
 
