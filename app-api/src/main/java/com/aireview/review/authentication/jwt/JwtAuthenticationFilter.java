@@ -6,7 +6,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final AuthenticationManager authenticationManager;
 
-
     public JwtAuthenticationFilter(String headerKey, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.headerKey = headerKey;
         this.jwtService = jwtService;
@@ -52,19 +50,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             chain.doFilter(request, response);
             return;
         }
-        if (authenticationIsRequired()) {
-            Authentication authResult = this.getAuthenticationManager().authenticate(authRequest);
-            SecurityContextHolder.getContext().setAuthentication(authResult);
-        }
-        chain.doFilter(request, response);
-    }
 
-    protected boolean authenticationIsRequired() {
-        Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
-        if (existingAuth == null || !existingAuth.isAuthenticated()) {
-            return true;
-        }
-        return (existingAuth instanceof AnonymousAuthenticationToken);
+        Authentication authResult = this.getAuthenticationManager().authenticate(authRequest);
+
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+        chain.doFilter(request, response);
     }
 
     public JwtAuthenticationToken extract(ServletRequest request) throws ServletException {
