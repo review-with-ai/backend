@@ -1,6 +1,6 @@
 package com.aireview.review.login.oauth;
 
-
+import com.aireview.review.domain.user.OAuthProvider;
 import org.springframework.util.Assert;
 
 public class OAuth2UserInfo {
@@ -13,19 +13,20 @@ public class OAuth2UserInfo {
 
     private String oauthUserId;
 
-    private String oauthProvider;
+    private OAuthProvider oauthProvider;
 
-    public OAuth2UserInfo(String name, String nickname, String email, String oauthUserId, String oauthProvider) {
+    public OAuth2UserInfo(String name, String nickname, String email, String oauthUserId, OAuthProvider oAuthProvider) {
         Assert.notNull(name, "oauth user register failed - name null ");
         Assert.notNull(nickname, "oauth user register failed - nickname null ");
         Assert.notNull(email, "oauth user register failed - email null ");
-        Assert.notNull(oauthUserId, "oauth user register failed - id null ");
+        Assert.notNull(oauthUserId, "oauth user register failed - user id null ");
+        Assert.notNull(oAuthProvider, "oauth user register failed - oauth provider null ");
 
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.oauthUserId = oauthUserId;
-        this.oauthProvider = oauthProvider;
+        this.oauthProvider = oAuthProvider;
     }
 
     public String getName() {
@@ -44,7 +45,7 @@ public class OAuth2UserInfo {
         return oauthUserId;
     }
 
-    public String getOauthProvider() {
+    public OAuthProvider getOauthProvider() {
         return oauthProvider;
     }
 }

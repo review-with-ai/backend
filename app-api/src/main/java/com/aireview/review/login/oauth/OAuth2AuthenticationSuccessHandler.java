@@ -41,7 +41,7 @@ public class OAuth2AuthenticationSuccessHandler extends LoginSuccessHandler {
 
 
     private OAuth2UserInfo getOAuth2UserInfo(String oauthProvider, OAuth2User oauth2User) {
-        return OAuth2UserAttributeConverter
+        return OAuth2UserAttribute2OAuthUserInfoConverter
                 .getUserInfoFromOAuth2UserAttribute(oauthProvider, oauth2User.getAttributes());
     }
 

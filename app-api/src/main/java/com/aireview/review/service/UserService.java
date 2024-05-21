@@ -1,8 +1,9 @@
 package com.aireview.review.service;
 
+import com.aireview.review.domain.user.OAuthProvider;
 import com.aireview.review.domain.user.User;
 import com.aireview.review.domain.user.UserRepository;
-import com.aireview.review.login.usernamepassword.CustomUserDetails;
+import com.aireview.review.login.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,7 +38,7 @@ public class UserService implements UserDetailsService {
 
     public User join(String email, String password, String name, String nickname) {
         // TODO: 4/29/24 중복 체크 필요 
-        User user = new User(name, nickname, email, passwordEncoder.encode(password));
+        User user = User.of(name, nickname, email, passwordEncoder.encode(password));
         return userRepository.save(user);
     }
 
@@ -46,8 +47,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByOauthProviderAndOauthUserId(oauthProvider, oauthUserId);
     }
 
-    public User oauthJoin(String name, String nickname, String email, String oauthProvider, String oAuthUserId) {
-        User user = new User(name, nickname, email, oauthProvider, oAuthUserId);
+    public User oauthJoin(String name, String nickname, String email, OAuthProvider oauthProvider, String oAuthUserId) {
+        User user = User.oauthUserOf(name, nickname, email, oauthProvider, oAuthUserId);
         return userRepository.save(user);
     }
 
