@@ -1,25 +1,26 @@
 package com.aireview.review.login.oauth;
 
+import com.aireview.review.domain.user.User;
+
 import java.util.Map;
 
-public enum OAuth2UserAttributeConverter {
-    NAVER {
-        @Override
+public class OAuth2UserAttributeConverter {
+    public static class NAVER {
         public OAuth2UserInfo from(Map<String, Object> attributes) {
             Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
             return new OAuth2UserInfo(
                     (String) response.get("name"),
                     (String) response.get("nickname"),
                     (String) response.get("email"),
                     (String) response.get("oauthUserId"),
-                    this.name());
+                    User.OAuthProvider.NAVER);
 
         }
     },
+
     KAKAO {
         @Override
-        protected OAuth2UserInfo from(Map<String, Object> attributes) {
+        protected OAuth2UserInfo from (Map < String, Object > attributes){
             Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
             return new OAuth2UserInfo(
@@ -29,7 +30,9 @@ public enum OAuth2UserAttributeConverter {
                     attributes.get("id").toString(),
                     this.name());
         }
-    };
+    }
+
+    ;
 
     protected abstract OAuth2UserInfo from(Map<String, Object> attributes);
 
