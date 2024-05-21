@@ -1,6 +1,6 @@
 package com.aireview.review.authentication.jwt;
 
-import com.aireview.review.exception.JwtNotValidException;
+import com.aireview.review.exception.RefreshTokenNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -63,14 +63,14 @@ public class JwtService {
         try {
             Claims claims = verify(refreshToken);
             String originalRefreshToken = refreshTokenRepository.findById(userId)
-                    .orElseThrow(() -> new JwtNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR));
+                    .orElseThrow(() -> new RefreshTokenNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR));
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(userId);
-                throw new JwtNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR);
+                throw new RefreshTokenNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR);
             }
             return createJwt(claims.userKey, claims.email, claims.roles);
         } catch (TokenExpiredException expiredException) {
-            throw new JwtNotValidException(REFRESH_TOKEN_EXPIRED_ERROR);
+            throw new RefreshTokenNotValidException(REFRESH_TOKEN_EXPIRED_ERROR);
         }
     }
 
@@ -103,7 +103,7 @@ public class JwtService {
         try {
             return new Claims(jwtVerifier.verify(token));
         } catch (JWTVerificationException exception) {
-            throw new JwtNotValidException(WRONG_TOKEN_ERROR);
+            throw new RefreshTokenNotValidException(WRONG_TOKEN_ERROR);
         }
     }
 

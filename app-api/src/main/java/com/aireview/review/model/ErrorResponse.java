@@ -1,6 +1,5 @@
 package com.aireview.review.model;
 
-import com.aireview.review.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
@@ -12,15 +11,7 @@ public class ErrorResponse {
     private String message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private int code;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> fieldError;
-
-    public ErrorResponse(ErrorCode errorCode) {
-        this.message = errorCode.getMessage();
-        this.code = errorCode.getCode();
-    }
 
     public ErrorResponse(String message) {
         this.message = message;
