@@ -20,11 +20,9 @@ public class Quiz extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", columnDefinition = "varchar(50)", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Note note;
 
-    @Column(name = "name", columnDefinition = "varchar(50)", nullable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 

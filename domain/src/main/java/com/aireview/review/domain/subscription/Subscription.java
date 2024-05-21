@@ -21,14 +21,13 @@ public class Subscription extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "bigint", nullable = false, updatable = false)
     @ManyToOne(optional = false)
     private User user;
 
-    @Column(name = "start_date", columnDefinition = "datetime", nullable = false, updatable = false)
+    @Column(name = "start_date", columnDefinition = "date", nullable = false, updatable = false)
     private LocalDateTime startDate;
 
-    @Column(name = "end_date", columnDefinition = "datetime", nullable = false, updatable = false)
+    @Column(name = "end_date", columnDefinition = "date", nullable = false, updatable = false)
     private LocalDateTime endDate;
 
     @Column(name = "cancelled_at", columnDefinition = "datetime")

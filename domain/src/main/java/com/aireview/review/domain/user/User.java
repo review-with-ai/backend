@@ -12,6 +12,9 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 @ToString
+@Table(name = "user", indexes = {
+        @Index(name = "user_email_idx", columnList = "email", unique = true)
+})
 public class User extends BaseTimeEntity {
 
     @Id
@@ -27,10 +30,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "password", columnDefinition = "varchar(256)")
     private String password;
 
-    @Column(name = "email", columnDefinition = "varchar(255)", nullable = false)
+    @Column(name = "email", columnDefinition = "varchar(255)", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "oauthProvider", columnDefinition = "varchar(20)")
+    @Column(name = "oauth_provider", columnDefinition = "varchar(20)")
     @Enumerated(EnumType.STRING)
     private OAuthProvider oauthProvider;
 

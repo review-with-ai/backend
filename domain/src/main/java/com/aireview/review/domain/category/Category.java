@@ -20,7 +20,6 @@ public class Category extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "bigint", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 

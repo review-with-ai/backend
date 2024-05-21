@@ -24,7 +24,9 @@ public class Coupon extends BaseTimeEntity {
     @Column(name = "code", columnDefinition = "varchar(50)", nullable = false, updatable = false)
     private String code;
 
-    @Column(name = "user_id", columnDefinition = "bigint", nullable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private CouponType couponType;
+
     @ManyToOne(optional = false)
     private User user;
 
@@ -42,12 +44,13 @@ public class Coupon extends BaseTimeEntity {
         AVAILABLE, UNAVAILABLE, USED;
     }
 
-    public static Coupon of(String code, User user, LocalDateTime issuedAt) {
-        return new Coupon(code, user, issuedAt, null, Status.AVAILABLE);
+    public static Coupon of(CouponType couponType, String code, User user, LocalDateTime issuedAt) {
+        return new Coupon(code, couponType, user, issuedAt, null, Status.AVAILABLE);
     }
 
-    public Coupon(String code, User user, LocalDateTime issuedAt, LocalDateTime usedAt, Status status) {
+    public Coupon(String code, CouponType couponType, User user, LocalDateTime issuedAt, LocalDateTime usedAt, Status status) {
         this.code = code;
+        this.couponType = couponType;
         this.user = user;
         this.issuedAt = issuedAt;
         this.usedAt = usedAt;

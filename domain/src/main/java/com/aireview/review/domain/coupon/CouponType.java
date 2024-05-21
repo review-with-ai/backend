@@ -21,7 +21,7 @@ public class CouponType extends BaseTimeEntity {
     @Column(name = "name", columnDefinition = "varchar(200)", nullable = false)
     private String name;
 
-    @Column(name = "name", columnDefinition = "varchar(500)", nullable = false)
+    @Column(name = "description", columnDefinition = "varchar(500)", nullable = false)
     private String description;
 
     @Column(name = "status", columnDefinition = "enum('AVAILABLE','UNAVAILABLE','EXPIRED')", nullable = false)

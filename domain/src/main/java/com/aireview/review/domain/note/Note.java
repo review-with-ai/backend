@@ -20,7 +20,6 @@ public class Note extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "bigint", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
@@ -30,7 +29,6 @@ public class Note extends BaseTimeEntity {
     @Column(name = "content", columnDefinition = "varchar(5000)", nullable = false)
     private String content;
 
-    @Column(name = "category_id", columnDefinition = "bigint", nullable = false)
     @ManyToOne(optional = false)
     private Category category;
 

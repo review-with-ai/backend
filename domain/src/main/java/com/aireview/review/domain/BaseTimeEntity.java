@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
 
-    @Column(name ="createdAt", columnDefinition = "datetime",  updatable = false, nullable = false)
+    @Column(name ="created_at", columnDefinition = "datetime",  updatable = false, nullable = false)
     @CreatedDate
     protected LocalDateTime createdAt;
 
-    @Column(name ="name", columnDefinition = "datetime",  nullable = false)
+    @Column(name ="updated_at", columnDefinition = "datetime",  nullable = false)
     @LastModifiedDate
     protected LocalDateTime updatedAt;
 }
