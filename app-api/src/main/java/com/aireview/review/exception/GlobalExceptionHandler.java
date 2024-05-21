@@ -1,5 +1,6 @@
 package com.aireview.review.exception;
 
+import com.aireview.review.exception.validation.ValidationException;
 import com.aireview.review.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,18 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ErrorResponse> baseException(BaseException ex) {
-        return ResponseEntity.status(ex.getHttpStatus())
-                .body(new ErrorResponse(ex.getErrorCode()));
+    @ExceptionHandler({ValidationException.class, RefreshTokenException.class})
+    public ResponseEntity<ErrorResponse> validationException(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> validationException(ResourceNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

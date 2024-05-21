@@ -1,7 +1,6 @@
 package com.aireview.review.authentication.jwt;
 
-import com.aireview.review.exception.BaseException;
-import com.aireview.review.exception.ErrorCode;
+import com.aireview.review.exception.JwtNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -10,7 +9,6 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.Getter;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -18,6 +16,9 @@ import java.util.Date;
 @Component
 @Getter
 public class JwtService {
+    private static final String REFRESH_TOKEN_EXPIRED_ERROR = "만료된 refresh token입니다. 재로그인이 필요합니다.";
+    private static final String REFRESH_TOKEN_VERIFICATION_ERROR = "발급된 refresh token이 없거나 발급된 토큰과 다릅니다. 재로그인이 필요합니다.";
+    private static final String WRONG_TOKEN_ERROR = "어플리케이션에서 발급된 토큰이 아닙니다.";
 
     private final String issuer;
 
@@ -58,22 +59,21 @@ public class JwtService {
         return new Jwt(accessToken, refreshToken);
     }
 
-    public Jwt refreshToken(Long userId, String refreshToken) throws BadRequestException {
+    public Jwt refreshToken(Long userId, String refreshToken) {
         try {
             Claims claims = verify(refreshToken);
             String originalRefreshToken = refreshTokenRepository.findById(userId)
-                    .orElseThrow(() -> new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR));
+                    .orElseThrow(() -> new JwtNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR));
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(userId);
-                throw new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR);
+                throw new JwtNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR);
             }
             return createJwt(claims.userKey, claims.email, claims.roles);
         } catch (TokenExpiredException expiredException) {
-            throw new BaseException(ErrorCode.REFRESH_TOKEN_EXPIRED_ERROR);
-        } catch (JWTVerificationException jwtVerificationException) {
-            throw new BaseException(ErrorCode.REFRESH_TOKEN_VERIFICATION_ERROR);
+            throw new JwtNotValidException(REFRESH_TOKEN_EXPIRED_ERROR);
         }
     }
+
 
     private String createAccessToken(Claims claims) {
         Date now = new Date();
@@ -100,7 +100,11 @@ public class JwtService {
     }
 
     public Claims verify(String token) {
-        return new Claims(jwtVerifier.verify(token));
+        try {
+            return new Claims(jwtVerifier.verify(token));
+        } catch (JWTVerificationException exception) {
+            throw new JwtNotValidException(WRONG_TOKEN_ERROR);
+        }
     }
 
     public void deleteRefreshToken(Long userId) {
