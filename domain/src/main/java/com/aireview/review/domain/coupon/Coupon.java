@@ -1,7 +1,6 @@
 package com.aireview.review.domain.coupon;
 
 import com.aireview.review.domain.BaseTimeEntity;
-import com.aireview.review.domain.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,8 +26,8 @@ public class Coupon extends BaseTimeEntity {
     @ManyToOne(optional = false)
     private CouponType couponType;
 
-    @ManyToOne(optional = false)
-    private User user;
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "issued_at", columnDefinition = "datetime", nullable = false, updatable = false)
     private LocalDateTime issuedAt;
@@ -44,14 +43,14 @@ public class Coupon extends BaseTimeEntity {
         AVAILABLE, UNAVAILABLE, USED;
     }
 
-    public static Coupon of(CouponType couponType, String code, User user, LocalDateTime issuedAt) {
-        return new Coupon(code, couponType, user, issuedAt, null, Status.AVAILABLE);
+    public static Coupon of(CouponType couponType, String code, Long userId, LocalDateTime issuedAt) {
+        return new Coupon(code, couponType, userId, issuedAt, null, Status.AVAILABLE);
     }
 
-    public Coupon(String code, CouponType couponType, User user, LocalDateTime issuedAt, LocalDateTime usedAt, Status status) {
+    public Coupon(String code, CouponType couponType, Long userId, LocalDateTime issuedAt, LocalDateTime usedAt, Status status) {
         this.code = code;
         this.couponType = couponType;
-        this.user = user;
+        this.userId = userId;
         this.issuedAt = issuedAt;
         this.usedAt = usedAt;
         this.status = status;

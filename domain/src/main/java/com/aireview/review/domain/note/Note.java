@@ -2,7 +2,6 @@ package com.aireview.review.domain.note;
 
 import com.aireview.review.domain.BaseTimeEntity;
 import com.aireview.review.domain.category.Category;
-import com.aireview.review.domain.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,8 +19,8 @@ public class Note extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private User user;
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "title", columnDefinition = "varchar(100)", nullable = false)
     private String title;
@@ -35,12 +34,12 @@ public class Note extends BaseTimeEntity {
     @Column(name = "is_deleted", columnDefinition = "tinyint(1)", nullable = false)
     private boolean isDeleted;
 
-    public Note of(User user, String title, String content, Category category) {
-        return new Note(user, title, content, category, false);
+    public Note of(Long userId, String title, String content, Category category) {
+        return new Note(userId, title, content, category, false);
     }
 
-    public Note(User user, String title, String content, Category category, boolean isDeleted) {
-        this.user = user;
+    public Note(Long userId, String title, String content, Category category, boolean isDeleted) {
+        this.userId = userId;
         this.title = title;
         this.content = content;
         this.category = category;

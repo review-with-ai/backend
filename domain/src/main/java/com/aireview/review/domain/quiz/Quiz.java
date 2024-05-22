@@ -1,8 +1,6 @@
 package com.aireview.review.domain.quiz;
 
 import com.aireview.review.domain.BaseTimeEntity;
-import com.aireview.review.domain.note.Note;
-import com.aireview.review.domain.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,11 +18,11 @@ public class Quiz extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Note note;
+    @Column(name = "note_id", nullable = false, updatable = false)
+    private Long noteId;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private User user;
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "question", columnDefinition = "varchar(100)", nullable = false)
     private String question;
@@ -43,13 +41,13 @@ public class Quiz extends BaseTimeEntity {
         REVIEWING, DONE;
     }
 
-    public static Quiz of(Note note, User user, String question, String answer) {
-        return new Quiz(note, user, question, answer, Status.REVIEWING, false);
+    public static Quiz of(Long noteId, Long userId, String question, String answer) {
+        return new Quiz(noteId, userId, question, answer, Status.REVIEWING, false);
     }
 
-    public Quiz(Note note, User user, String question, String answer, Status status, boolean isDeleted) {
-        this.note = note;
-        this.user = user;
+    public Quiz(Long noteId, Long userId, String question, String answer, Status status, boolean isDeleted) {
+        this.noteId = noteId;
+        this.userId = userId;
         this.question = question;
         this.answer = answer;
         this.status = status;

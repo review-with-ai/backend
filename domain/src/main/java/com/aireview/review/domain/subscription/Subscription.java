@@ -1,7 +1,6 @@
 package com.aireview.review.domain.subscription;
 
 import com.aireview.review.domain.BaseTimeEntity;
-import com.aireview.review.domain.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,8 +20,8 @@ public class Subscription extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private User user;
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "start_date", columnDefinition = "date", nullable = false, updatable = false)
     private LocalDateTime startDate;
@@ -41,17 +40,17 @@ public class Subscription extends BaseTimeEntity {
         ACTIVE, CANCELLED, EXPIRED;
     }
 
-    public static Subscription of(User user, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt) {
-        return new Subscription(user, startDate, endDate, cancelledAt, Status.ACTIVE);
+    public static Subscription of(Long userId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt) {
+        return new Subscription(userId, startDate, endDate, cancelledAt, Status.ACTIVE);
     }
 
     public Subscription(
-            User user,
+            Long userId,
             LocalDateTime startDate,
             LocalDateTime endDate,
             LocalDateTime cancelledAt,
             Status status) {
-        this.user = user;
+        this.userId = userId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.cancelledAt = cancelledAt;

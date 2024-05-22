@@ -2,7 +2,6 @@ package com.aireview.review.domain.category;
 
 
 import com.aireview.review.domain.BaseTimeEntity;
-import com.aireview.review.domain.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,8 +19,8 @@ public class Category extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private User user;
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "title", columnDefinition = "varchar(50)", nullable = false)
     private String title;
@@ -32,12 +31,12 @@ public class Category extends BaseTimeEntity {
     @Column(name = "is_deleted", columnDefinition = "tinyint(1)", nullable = false)
     private boolean isDeleted;
 
-    public static Category of(User user, String title, Byte order){
-        return new Category(user, title, order, false);
+    public static Category of(Long userId, String title, Byte order) {
+        return new Category(userId, title, order, false);
     }
 
-    public Category(User user, String title, Byte order, boolean isDeleted) {
-        this.user = user;
+    public Category(Long userId, String title, Byte order, boolean isDeleted) {
+        this.userId = userId;
         this.title = title;
         this.order = order;
         this.isDeleted = isDeleted;
