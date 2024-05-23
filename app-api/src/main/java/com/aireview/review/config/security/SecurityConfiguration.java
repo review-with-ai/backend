@@ -1,9 +1,9 @@
 package com.aireview.review.config.security;
 
-import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.authentication.jwt.JwtAuthenticationFilter;
 import com.aireview.review.authentication.jwt.JwtAuthenticationProvider;
 import com.aireview.review.authentication.jwt.JwtConfig;
+import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.login.LoginFailureHandler;
 import com.aireview.review.login.Role;
 import com.aireview.review.login.oauth.OAuth2AuthenticationSuccessHandler;
@@ -128,6 +128,7 @@ public class SecurityConfiguration {
                 config.getIteration(),
                 Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
     }
+
 
     @Bean
     public JsonUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(

@@ -1,3 +1,22 @@
+CREATE TABLE `user`
+(
+    `id`             bigint                                                                                NOT NULL AUTO_INCREMENT COMMENT '유저 식별자',
+    `name`           varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                          NOT NULL COMMENT '유저 이름',
+    `nickname`       varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                          NOT NULL COMMENT '유저 닉네임',
+    `email`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                         NOT NULL COMMENT '유저 이메일',
+    `password`       varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '유저 패스워드. oauth 가입 유저의 경우 null',
+    `oauth_user_id`  varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT 'oauth 인증 서버의 유저 식별자',
+    `oauth_provider` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci  DEFAULT NULL COMMENT 'oauth 인증 제공자 ex) naver, kakao',
+    `has_subscribed` tinyint(1)                                                                            NOT NULL COMMENT '이용권 구독 여부. 1이면 구독 0이면 구독 안함.',
+    `status`         enum ('ENABLED','BLOCKED','DELETED') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '유저 상태(활성, 정지, 삭제)',
+    `created_at`     datetime                                                                              NOT NULL COMMENT '유저 가입 시각',
+    `updated_at`     datetime                                                                              NOT NULL COMMENT '유저 정보 마지막으로 수정된 시각',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `user_email_idx` (`email`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3;
+
+
 CREATE TABLE `category`
 (
     `id`         bigint                                                       NOT NULL AUTO_INCREMENT COMMENT '카테고리 식별자',
@@ -13,23 +32,6 @@ CREATE TABLE `category`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb3;
 
-CREATE TABLE `coupon`
-(
-    `id`        bigint                                                                                   NOT NULL AUTO_INCREMENT COMMENT '쿠폰 식별자',
-    `code`      varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                             NOT NULL COMMENT '쿠폰 코드(랜덤 스트링, 유저에게 노출되는 쿠폰 코드)',
-    `user_id`   bigint                                                                                   NOT NULL COMMENT '쿠폰을 발급받은 유저',
-    `type`      bigint                                                                                   NOT NULL COMMENT '쿠폰 타입',
-    `issued_at` datetime                                                                                 NOT NULL COMMENT '쿠폰 발급 시각',
-    `used_at`   datetime DEFAULT NULL COMMENT '쿠폰 사용 시각(쿠폰 사용 전 null)',
-    `status`    enum ('AVAILABLE','USED','UNAVAILABLE') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '쿠폰 상태(사용 가능, 사용 후, 사용 불가능)',
-    PRIMARY KEY (`id`),
-    KEY `type` (`type`),
-    KEY `user_id` (`user_id`),
-    CONSTRAINT `coupon_ibfk_1` FOREIGN KEY (`type`) REFERENCES `coupon_type` (`id`),
-    CONSTRAINT `coupon_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb3;
-
 CREATE TABLE `coupon_type`
 (
     `id`          bigint                                                                                      NOT NULL AUTO_INCREMENT COMMENT '쿠폰 타입 식별자',
@@ -41,6 +43,26 @@ CREATE TABLE `coupon_type`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb3;
+
+CREATE TABLE `coupon`
+(
+    `id`             bigint                                                                                   NOT NULL AUTO_INCREMENT COMMENT '쿠폰 식별자',
+    `code`           varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                             NOT NULL COMMENT '쿠폰 코드(랜덤 스트링, 유저에게 노출되는 쿠폰 코드)',
+    `user_id`        bigint                                                                                   NOT NULL COMMENT '쿠폰을 발급받은 유저',
+    `coupon_type_id` bigint                                                                                   NOT NULL COMMENT '쿠폰 타입 식별자',
+    `issued_at`      datetime                                                                                 NOT NULL COMMENT '쿠폰 발급 시각',
+    `used_at`        datetime DEFAULT NULL COMMENT '쿠폰 사용 시각(쿠폰 사용 전 null)',
+    `created_at`     datetime                                                                                 NOT NULL COMMENT '쿠폰 생성 시각',
+    `updated_at`     datetime                                                                                 NOT NULL COMMENT '쿠폰이 마지막으로 업데이트 된 시각',
+    `status`         enum ('AVAILABLE','USED','UNAVAILABLE') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '쿠폰 상태(사용 가능, 사용 후, 사용 불가능)',
+    PRIMARY KEY (`id`),
+    KEY `coupon_type_id` (`coupon_type_id`),
+    KEY `user_id` (`user_id`),
+    CONSTRAINT `coupon_ibfk_1` FOREIGN KEY (`coupon_type_id`) REFERENCES `coupon_type` (`id`),
+    CONSTRAINT `coupon_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3;
+
 
 CREATE TABLE `note`
 (
@@ -87,28 +109,11 @@ CREATE TABLE `subscription`
     `end_date`     date                                                                                   NOT NULL COMMENT '구독 만료 날짜. 취소하지 않을 경우 최대 날짜(2100-01-01). 구독 취소시 구독 만료 날짜.',
     `cancelled_at` datetime DEFAULT NULL COMMENT '구독 취소 시각',
     `created_at`   datetime                                                                               NOT NULL COMMENT '구독 생성 시각',
+    `updated_at`   datetime                                                                               NOT NULL COMMENT '구독이 마지막으로 업데이트된 시각',
     `status`       enum ('ACTIVE','CANCELLED','EXPIRED') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '구독 상태(구독중, 구독 취소 예정, 만료)',
     PRIMARY KEY (`id`),
     KEY `user_id` (`user_id`),
     CONSTRAINT `subscription_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb3;
-
-CREATE TABLE `user`
-(
-    `id`             bigint                                                                                NOT NULL AUTO_INCREMENT COMMENT '유저 식별자',
-    `name`           varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                          NOT NULL COMMENT '유저 이름',
-    `nickname`       varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                          NOT NULL COMMENT '유저 닉네임',
-    `email`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci                         NOT NULL COMMENT '유저 이메일',
-    `password`       varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '유저 패스워드. oauth 가입 유저의 경우 null',
-    `oauth_user_id`  varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT 'oauth 인증 서버의 유저 식별자',
-    `oauth_provider` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci  DEFAULT NULL COMMENT 'oauth 인증 제공자 ex) naver, kakao',
-    `has_subscribed` tinyint(1)                                                                            NOT NULL COMMENT '이용권 구독 여부. 1이면 구독 0이면 구독 안함.',
-    `status`         enum ('ENABLED','BLOCKED','DELETED') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '유저 상태(활성, 정지, 삭제)',
-    `created_at`     datetime                                                                              NOT NULL COMMENT '유저 가입 시각',
-    `updated_at`     datetime                                                                              NOT NULL COMMENT '유저 정보 마지막으로 수정된 시각',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `user_email_idx` (`email`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb3;
 
