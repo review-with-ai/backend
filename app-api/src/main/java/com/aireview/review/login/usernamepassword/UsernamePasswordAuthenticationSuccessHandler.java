@@ -2,7 +2,7 @@ package com.aireview.review.login.usernamepassword;
 
 import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.domain.user.User;
-import com.aireview.review.login.CustomUserDetails;
+import com.aireview.review.login.UserDetails;
 import com.aireview.review.login.LoginSuccessHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ public class UsernamePasswordAuthenticationSuccessHandler extends LoginSuccessHa
 
     @Override
     protected User processAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return userDetails.getUser();
     }
 }

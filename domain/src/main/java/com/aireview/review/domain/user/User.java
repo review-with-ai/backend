@@ -1,5 +1,6 @@
 package com.aireview.review.domain.user;
 
+import com.aireview.review.config.EmailAttributeConverter;
 import com.aireview.review.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -31,7 +32,8 @@ public class User extends BaseTimeEntity {
     private String password;
 
     @Column(name = "email", columnDefinition = "varchar(255)", nullable = false, unique = true)
-    private String email;
+    @Convert(converter = EmailAttributeConverter.class)
+    private Email email;
 
     @Column(name = "oauth_provider", columnDefinition = "varchar(20)")
     @Enumerated(EnumType.STRING)
@@ -51,11 +53,11 @@ public class User extends BaseTimeEntity {
         ENABLED, BLOCKED, DELETED;
     }
 
-    public static User of(String name, String nickname, String email, String password) {
+    public static User of(String name, String nickname, Email email, String password) {
         return new User(null, name, nickname, password, email, null, null, false, Status.ENABLED);
     }
 
-    public static User oauthUserOf(String name, String nickname, String email, OAuthProvider oauthProvider, String oAuthUserId) {
+    public static User oauthUserOf(String name, String nickname, Email email, OAuthProvider oauthProvider, String oAuthUserId) {
         return new User(null, name, nickname, null, email, oauthProvider, oAuthUserId, false, Status.ENABLED);
     }
 
@@ -64,7 +66,7 @@ public class User extends BaseTimeEntity {
             String name,
             String nickname,
             String password,
-            String email,
+            Email email,
             OAuthProvider oauthProvider,
             String oAuthUserId,
             Boolean hasSubscribed,

@@ -27,7 +27,7 @@ public abstract class LoginSuccessHandler implements AuthenticationSuccessHandle
         Long userId = user.getId();
         Jwt jwt = jwtService.createJwt(
                 userId,
-                user.getEmail(),
+                user.getEmail().getAddress(),
                 authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 
         LoginResponse loginResponse = new LoginResponse(jwt.getAccessToken(), jwt.getRefreshToken(), userId);

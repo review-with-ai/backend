@@ -34,7 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends LoginSuccessHandler {
 
         OAuth2UserInfo userInfo = getOAuth2UserInfo(oauthProvider, oauth2User);
 
-        Optional<User> oauthUser = userService.findOauthUser(oauthProvider, userInfo.getOauthUserId());
+        Optional<User> oauthUser = userService.findOauthUser(userInfo.getOauthProvider(), userInfo.getOauthUserId());
         return oauthUser
                 .orElseGet(() -> persistUser(userInfo));
     }

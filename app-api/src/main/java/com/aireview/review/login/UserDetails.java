@@ -2,51 +2,38 @@ package com.aireview.review.login;
 
 
 import com.aireview.review.domain.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.List;
 
 
-public class CustomUserDetails implements UserDetails {
+public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
     @Getter
     private User user;
 
-    @Getter
-    private Long userId;
-
-
-    private String username;
-
-    @JsonIgnore
-    private String password;
-
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(
+    public UserDetails(
             User user,
-            Long userId,
-            String username,
-            String password,
             Collection<? extends GrantedAuthority> authorities
     ) {
-        Assert.isTrue(user != null && userId != null && username != null && password != null && authorities != null
+        Assert.isTrue(user != null && authorities != null
                 , "user must be provided");
         this.user = user;
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
         this.authorities = authorities;
     }
 
 
-    public CustomUserDetails(User user) {
-        this(user, user.getId(), user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(Role.USER.value())));
+    public UserDetails(User user) {
+        this(user, List.of(new SimpleGrantedAuthority(Role.USER.value())));
+    }
+
+    public Long getUserId() {
+        return user.getId();
     }
 
     @Override
@@ -56,12 +43,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return user.getEmail().getAddress();
     }
 
     @Override
