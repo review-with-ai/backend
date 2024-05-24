@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorResponse> constraintViolation(MethodArgumentNotValidException ex, BindingResult bindingResult) {
         Map<String, String> fieldErrors = new HashMap<>();
 
