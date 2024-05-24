@@ -1,4 +1,4 @@
-package com.aireview.review.config.security;
+package com.aireview.review.config;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

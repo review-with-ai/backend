@@ -20,6 +20,7 @@ repositories {
 dependencies {
     //db
     implementation 'org.flywaydb:flyway-mysql'
+    implementation 'org.springframework.security:spring-security-crypto'
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
 

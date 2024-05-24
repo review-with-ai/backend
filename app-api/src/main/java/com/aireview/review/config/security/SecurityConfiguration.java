@@ -4,6 +4,7 @@ import com.aireview.review.authentication.jwt.JwtAuthenticationFilter;
 import com.aireview.review.authentication.jwt.JwtAuthenticationProvider;
 import com.aireview.review.authentication.jwt.JwtConfig;
 import com.aireview.review.authentication.jwt.JwtService;
+import com.aireview.review.config.SecretEncoderConfig;
 import com.aireview.review.login.LoginFailureHandler;
 import com.aireview.review.login.Role;
 import com.aireview.review.login.oauth.OAuth2AuthenticationSuccessHandler;
@@ -27,7 +28,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -118,15 +118,6 @@ public class SecurityConfiguration {
         providerManager.setEraseCredentialsAfterAuthentication(true);
 
         return providerManager;
-    }
-
-    @Bean
-    public PasswordEncoder pbk2PasswordEncoder(SecretEncoderConfig config) {
-        return new Pbkdf2PasswordEncoder(
-                config.getSecret(),
-                config.getSaltLength(),
-                config.getIteration(),
-                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
     }
 
 
