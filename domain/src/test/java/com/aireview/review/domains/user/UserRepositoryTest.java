@@ -1,7 +1,5 @@
 package com.aireview.review.domain.user;
 
-import com.aireview.review.domain.user.User;
-import com.aireview.review.domain.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,7 +17,7 @@ class UserRepositoryTest {
 
     @Test
     void 유저가_등록된다() {
-        User user = new User( "홍길동", "hongs", "hong@gmail.com", "hong1234");
+        User user = User.of( "홍길동", "hongs", "hong@gmail.com", "hong1234");
         userRepository.save(user);
 
         Optional<User> persistedUser = userRepository.findById(user.getId());
