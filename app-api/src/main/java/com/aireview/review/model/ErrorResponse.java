@@ -1,23 +1,32 @@
 package com.aireview.review.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.aireview.review.common.exception.ErrorCode;
 import lombok.Getter;
 
-import java.util.Map;
+import java.time.LocalDateTime;
 
 @Getter
 public class ErrorResponse {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, String> fieldError;
+    private final String code;
 
-    public ErrorResponse(String message) {
-        this.message = message;
+    private final String reason;
+
+    private final LocalDateTime timestamp;
+
+    private final String path;
+
+    public ErrorResponse(ErrorCode errorCode, String path) {
+        this.code = errorCode.getCode();
+        this.reason = errorCode.getReason();
+        this.timestamp = LocalDateTime.now();
+        this.path = path;
     }
 
-    public ErrorResponse(Map<String, String> fieldError) {
-        this.fieldError = fieldError;
+    public ErrorResponse(String code, String reason, String path) {
+        this.code = code;
+        this.reason = reason;
+        this.timestamp = LocalDateTime.now();
+        this.path = path;
     }
 }
