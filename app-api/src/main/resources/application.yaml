@@ -1,6 +1,45 @@
 spring:
   profiles:
     include: db, secret, oauth
+---
+spring:
+  config:
+    activate:
+      on-profile: local, dev
+  security:
+    debug: true
+  session:
+    store-type: redis
+    redis:
+      namespace: aireview:session
+    timeout: 3600
+  data:
+    redis:
+      host: redis
+      port: 6379
+server:
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 10
+    max-connections: 100
+    accept-count: 10
+    connection-timeout: 2000
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+management:
+  server:
+    port: 8081
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: "/manage"
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
 management:
   server:
     port: 8081
@@ -20,64 +59,14 @@ management:
   health:
     diskspace:
       enabled: false
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  devtools:
-    restart:
-      enabled: false
-    livereload:
-      enabled: true
-  security:
-    debug: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password:
-  session:
-    store-type: redis
-    redis:
-      namespace: aireview:session
-    timeout: 3600
-server:
-  tomcat:
-    threads:
-      max: 10
-      min-spare: 10
-    max-connections: 100
-    accept-count: 10
-    connection-timeout: 2000
-logging:
-  level:
-    root: INFO
-    org:
-      springframework:
-        web: DEBUG
-      hibernate:
-        type:
-          descriptor:
-            sql: trace
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  devtools:
-    restart:
-      enabled: false
-    livereload:
-      enabled: false
   security:
     debug: false
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
   session:
-    store-type: redis
+    store-type: { REDIS_HOST }
     redis:
       namespace: aireview:session
     timeout: 3600
@@ -89,10 +78,6 @@ server:
     max-connections: 100
     accept-count: 10
     connection-timeout: 2000
----
-spring:
-  config:
-    activate:
-      on-profile: prod
----
-
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0

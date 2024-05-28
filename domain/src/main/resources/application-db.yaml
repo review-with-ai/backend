@@ -1,14 +1,18 @@
 spring:
+  messages:
+    basename: errors
+---
+spring:
   config:
     activate:
-      on-profile: local
+      on-profile: local, dev
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/ai_review
-    username: review
-    password: review
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     hikari:
-      maximum-pool-size: 3
-      minimum-idle: 3
+      maximum-pool-size: 8
+      minimum-idle: 8
       connection-timeout: 2000
   jpa:
     generate-ddl: true
@@ -22,11 +26,6 @@ spring:
   flyway:
     enabled: true
     validateMigrationNaming: true
----
-spring:
-  config:
-    activate:
-      on-profile: dev
 ---
 spring:
   config:

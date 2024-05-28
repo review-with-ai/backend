@@ -168,7 +168,7 @@ mysql/
 ngrinder-agent/
 
 # application property
-**/application-secret.yaml
+.env
 
 # github flow 관련 파일
 .github/
