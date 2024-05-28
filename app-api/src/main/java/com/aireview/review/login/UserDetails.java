@@ -1,7 +1,7 @@
 package com.aireview.review.login;
 
 
-import com.aireview.review.domain.user.User;
+import com.aireview.review.domains.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,7 +48,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
     @Override
     public String getUsername() {
-        return user.getEmail().getAddress();
+        return user.getEmail();
     }
 
     @Override

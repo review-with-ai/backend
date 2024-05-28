@@ -1,7 +1,6 @@
 package com.aireview.review.login.oauth;
 
-import com.aireview.review.domain.user.Email;
-import com.aireview.review.domain.user.OAuthProvider;
+import com.aireview.review.domains.user.domain.OAuthProvider;
 
 import java.util.Map;
 
@@ -12,7 +11,7 @@ public enum OAuth2UserAttribute2OAuthUserInfoConverter {
             return new OAuth2UserInfo(
                     (String) response.get("name"),
                     (String) response.get("nickname"),
-                    Email.of((String) response.get("email")),
+                    (String) response.get("email"),
                     (String) response.get("id"),
                     OAuthProvider.NAVER);
 
@@ -27,7 +26,7 @@ public enum OAuth2UserAttribute2OAuthUserInfoConverter {
             return new OAuth2UserInfo(
                     (String) kakaoAccount.get("name"),
                     (String) profile.get("nickname"),
-                    Email.of((String) kakaoAccount.get("email")),
+                    (String) kakaoAccount.get("email"),
                     attributes.get("id").toString(),
                     OAuthProvider.KAKAO);
         }
