@@ -28,6 +28,7 @@ server:
 sentry:
   dsn: ${SENTRY_DSN}
   traces-sample-rate: 1.0
+  environment: {SENTRY_ENVIRONMENT}
 management:
   server:
     port: 8081
