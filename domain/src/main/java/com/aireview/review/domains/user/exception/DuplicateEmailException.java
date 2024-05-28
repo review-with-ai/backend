@@ -1,9 +1,11 @@
-package com.aireview.review.exception.validation;
+package com.aireview.review.domains.user.exception;
+
+import com.aireview.review.common.exception.ValidationException;
 
 public class DuplicateEmailException extends ValidationException {
-    private static String DEAFULT_MESSAGE = "중복된 이메일입니다.";
+    public static final DuplicateEmailException INSTANCE = new DuplicateEmailException(UserErrorCode.EMAIL_DUPLICATE);
 
-    public DuplicateEmailException() {
-        super(DEAFULT_MESSAGE);
+    private DuplicateEmailException(UserErrorCode errorCode) {
+        super(errorCode);
     }
 }
