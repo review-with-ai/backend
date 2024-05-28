@@ -1,7 +1,7 @@
 package com.aireview.review.login.usernamepassword;
 
 import com.aireview.review.authentication.jwt.JwtService;
-import com.aireview.review.domain.user.User;
+import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.login.UserDetails;
 import com.aireview.review.login.LoginSuccessHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;

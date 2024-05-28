@@ -1,4 +1,4 @@
-package com.aireview.review.login;
+package com.aireview.review.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
