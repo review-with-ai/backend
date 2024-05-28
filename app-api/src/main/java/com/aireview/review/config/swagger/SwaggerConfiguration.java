@@ -4,7 +4,7 @@ import com.aireview.review.authentication.jwt.JwtConfig;
 import com.aireview.review.common.exception.AiReviewException;
 import com.aireview.review.common.exception.ErrorCode;
 import com.aireview.review.config.swagger.docs.PossibleExceptions;
-import com.aireview.review.login.LoginErrorCode;
+import com.aireview.review.login.exception.LoginErrorCode;
 import com.aireview.review.login.usernamepassword.UsernamePasswordLoginRequest;
 import com.aireview.review.model.ErrorResponse;
 import io.swagger.v3.oas.models.Components;

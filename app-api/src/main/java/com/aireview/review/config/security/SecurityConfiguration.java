@@ -79,15 +79,18 @@ public class SecurityConfiguration {
             EntryPointUnauthenticatedHandler entryPointUnauthenticatedHandler,
             JwtAuthenticationFilter jwtAuthenticationFilter
     ) throws Exception {
-        // TODO: 4/29/24 CSRF 설정 필요
+        // TODO: 4/29/24 CSRF,CORS 설정 필요
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/coupon/fcfs").hasRole(Role.USER.name())
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAfter(jwtAuthenticationFilter, ExceptionTranslationFilter.class)
                 .exceptionHandling(handler -> handler
