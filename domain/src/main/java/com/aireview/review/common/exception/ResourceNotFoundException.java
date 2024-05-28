@@ -1,8 +1,8 @@
-package com.aireview.review.exception;
+package com.aireview.review.common.exception;
 
-public class ResourceNotFoundException extends AiReviewException {
-    // TODO: 5/25/24 resource 메시지에 담을 수 없을까
-    public ResourceNotFoundException(ErrorCode errorCode) {
+public abstract class ResourceNotFoundException extends AiReviewException {
+    // TODO: 5/25/24 에러 원인이 된 resource 메시지에 담을 수 없을까
+    protected ResourceNotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }
 }
