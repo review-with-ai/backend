@@ -1,7 +1,7 @@
-package com.aireview.review.domain.note;
+package com.aireview.review.domains.note;
 
-import com.aireview.review.domain.BaseTimeEntity;
-import com.aireview.review.domain.category.Category;
+import com.aireview.review.domains.BaseTimeEntity;
+import com.aireview.review.domains.category.Category;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

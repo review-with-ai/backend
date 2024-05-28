@@ -1,4 +1,4 @@
-package com.aireview.review.domain.quiz;
+package com.aireview.review.domains.quiz;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

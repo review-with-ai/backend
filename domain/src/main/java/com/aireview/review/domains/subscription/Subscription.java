@@ -1,6 +1,6 @@
-package com.aireview.review.domain.subscription;
+package com.aireview.review.domains.subscription;
 
-import com.aireview.review.domain.BaseTimeEntity;
+import com.aireview.review.domains.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

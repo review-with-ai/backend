@@ -1,4 +1,4 @@
-package com.aireview.review.domain.user;
+package com.aireview.review.domains.user.domain;
 
 public enum OAuthProvider {
     KAKAO, NAVER;

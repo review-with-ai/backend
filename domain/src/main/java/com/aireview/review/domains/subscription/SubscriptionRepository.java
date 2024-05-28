@@ -1,4 +1,4 @@
-package com.aireview.review.domain.subscription;
+package com.aireview.review.domains.subscription;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

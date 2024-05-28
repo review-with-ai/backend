@@ -1,4 +1,4 @@
-package com.aireview.review.domain;
+package com.aireview.review.domains;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
