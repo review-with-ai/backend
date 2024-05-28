@@ -14,9 +14,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final JwtService jwtService;
 
-    private final String ACCESS_TOKEN_EXPIRED_MESSAGE = "access token has expired";
+    private final String ACCESS_TOKEN_EXPIRED_MESSAGE = "액세스 토큰이 만료되었습니다.";
 
-    private final String ACCESS_TOKEN_VERIFICATION_MESSAGE = "access token is not valid";
+    private final String ACCESS_TOKEN_VERIFICATION_MESSAGE = "유효하지 않은 토큰입니다.";
 
 
     @Override

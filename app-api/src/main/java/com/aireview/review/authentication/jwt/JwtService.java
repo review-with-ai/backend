@@ -1,6 +1,8 @@
 package com.aireview.review.authentication.jwt;
 
-import com.aireview.review.exception.RefreshTokenNotValidException;
+import com.aireview.review.authentication.jwt.exception.RefreshTokenExpiredException;
+import com.aireview.review.authentication.jwt.exception.RefreshTokenNotIssuedByApp;
+import com.aireview.review.authentication.jwt.exception.RefreshTokenNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -16,9 +18,6 @@ import java.util.Date;
 @Component
 @Getter
 public class JwtService {
-    private static final String REFRESH_TOKEN_EXPIRED_ERROR = "만료된 refresh token입니다. 재로그인이 필요합니다.";
-    private static final String REFRESH_TOKEN_VERIFICATION_ERROR = "발급된 refresh token이 없거나 발급된 토큰과 다릅니다. 재로그인이 필요합니다.";
-    private static final String WRONG_TOKEN_ERROR = "어플리케이션에서 발급된 토큰이 아닙니다.";
 
     private final String issuer;
 
@@ -63,14 +62,16 @@ public class JwtService {
         try {
             Claims claims = verify(refreshToken);
             String originalRefreshToken = refreshTokenRepository.findById(userId)
-                    .orElseThrow(() -> new RefreshTokenNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR));
+                    .orElseThrow(() -> RefreshTokenNotValidException.INSTANCE);
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(userId);
-                throw new RefreshTokenNotValidException(REFRESH_TOKEN_VERIFICATION_ERROR);
+                throw RefreshTokenNotValidException.INSTANCE;
             }
             return createJwt(claims.userKey, claims.email, claims.roles);
         } catch (TokenExpiredException expiredException) {
-            throw new RefreshTokenNotValidException(REFRESH_TOKEN_EXPIRED_ERROR);
+            throw RefreshTokenExpiredException.INSTANCE;
+        } catch (JWTVerificationException exception) {
+            throw RefreshTokenNotIssuedByApp.INSTANCE;
         }
     }
 
@@ -100,11 +101,7 @@ public class JwtService {
     }
 
     public Claims verify(String token) {
-        try {
-            return new Claims(jwtVerifier.verify(token));
-        } catch (JWTVerificationException exception) {
-            throw new RefreshTokenNotValidException(WRONG_TOKEN_ERROR);
-        }
+        return new Claims(jwtVerifier.verify(token));
     }
 
     public void deleteRefreshToken(Long userId) {

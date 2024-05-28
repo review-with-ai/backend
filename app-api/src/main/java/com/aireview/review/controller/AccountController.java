@@ -6,7 +6,7 @@ import com.aireview.review.config.swagger.ApiExceptionExample;
 import com.aireview.review.config.swagger.docs.RefreshTokenPossibleException;
 import com.aireview.review.config.swagger.docs.UserJoinPossibleExceptions;
 import com.aireview.review.domains.user.domain.User;
-import com.aireview.review.login.LoginResponse;
+import com.aireview.review.model.LoginResponse;
 import com.aireview.review.model.JoinRequest;
 import com.aireview.review.model.RefreshTokenRequest;
 import com.aireview.review.service.UserService;
