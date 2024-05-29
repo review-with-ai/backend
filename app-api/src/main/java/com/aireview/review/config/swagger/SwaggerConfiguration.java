@@ -21,10 +21,12 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,9 +52,15 @@ public class SwaggerConfiguration {
 
     private final ApplicationContext applicationContext;
 
+    @Value("${swagger.host}")
+    private String host;
+
     @Bean
     public OpenAPI openAPI() {
+        Server server = new Server();
+        server.setUrl(host);
         return new OpenAPI()
+                .servers(List.of(server))
                 .info(new Info()
                         .title("ai review 프로젝트 REST API 명세서")
                         .version("v1"))
