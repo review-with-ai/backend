@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 public class NicknameValidator implements ConstraintValidator<Nickname, String> {
-    private static final Pattern pattern = Pattern.compile("^[a-zA-Z가-힣0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\|,.<>\\/?`~]{3,20}$");
+    private static final Pattern pattern = Pattern.compile("^[a-zA-Z0-9가-힣!@#$%^&*()_+={}\\[\\]:;\"'<>,.?\\/~`-]{2,20}$");
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {

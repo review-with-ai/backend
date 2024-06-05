@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 public class JoinRequest {
 
     @UserName
-    @Schema(description = "사용자 이름은 3글자이상 50글자 이하의 한글만 가능합니다.(공백 불가능)", example = "홍길동")
+    @Schema(description = "사용자 이름은 2글자이상 10글자 이하의 한글만 가능합니다.(공백 불가능)", example = "홍길동")
     private String name;
 
     @Nickname
-    @Schema(description = "닉네임은 5글자 이상 20글자 이하여야 합니다.(영문자, 한글, 숫자, 특수문자 가능).", example = "홍길동_24")
+    @Schema(description = "닉네임은 2글자 이상 20글자 이하여야 합니다.(영문자, 한글, 숫자, 특수문자 가능).", example = "홍길동_24")
     private String nickname;
 
     @Email(regexp = "[\\w~\\-.+]+@[\\w~\\-]+(\\.[\\w~\\-]+)+", message = "{Email}")
@@ -26,7 +26,7 @@ public class JoinRequest {
     private String email;
 
     @Password
-    @Schema(description = "패스워드는 8글자 20글자 이하여야하고 반드시 한개 이상의 영문자 및 숫자를 포함해야합니다.(특수문자 불가능)", example = "hongpass24")
+    @Schema(description = "패스워드는 8글자 이상 20글자 이하여야하고 반드시 한개 이상의 영문자,숫자, 특수문자를 포함해야합니다.", example = "hongpass24!!")
     private String password;
 
     public JoinRequest(String name, String nickname, String email, String password) {
