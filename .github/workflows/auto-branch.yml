@@ -22,8 +22,7 @@ jobs:
       - name: Create branch for issue
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
-          ISSUE_TITLE=${{ github.event.issue.title }}
-          BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_TITLE// /-}"
+          BRANCH_NAME="issue-${ISSUE_NUMBER}"
           git checkout -b $BRANCH_NAME
           git push origin $BRANCH_NAME
 
