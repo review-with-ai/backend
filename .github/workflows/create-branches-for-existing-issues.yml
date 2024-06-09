@@ -4,14 +4,14 @@ on:
   workflow_dispatch: # 수동으로 실행하기 위한 트리거
 
 permissions:
-  contents: write
-  
+  contents: write # contents에 대한 쓰기 권한을 부여합니다.
+
 jobs:
   create_branches:
     runs-on: ubuntu-latest # 또는 원하는 환경 설정
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Git
         run: |
@@ -26,10 +26,9 @@ jobs:
 
       - name: Parse and create branches
         run: |
-          issues=$(jq -r '.[] | select(.pull_request == null) | .number,.title' issues.json)
-          while IFS= read -r issue_number && IFS= read -r issue_title; do
-            branch_name="issue-${issue_number}-${issue_title// /-}"
-            branch_name=${branch_name//[^a-zA-Z0-9\-]/} # 브랜치 이름에 사용할 수 없는 문자는 제거
+          issues=$(jq -r '.[] | select(.pull_request == null) | .number' issues.json)
+          while IFS= read -r issue_number; do
+            branch_name="issue-${issue_number}"
             git checkout -b "$branch_name"
             git push origin "$branch_name"
             curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -41,4 +40,3 @@ jobs:
       - name: Clean up
         run: |
           rm issues.json
-
