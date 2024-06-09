@@ -6,6 +6,7 @@ on:
     
 permissions:
   contents: write # contents에 대한 쓰기 권한을 부여합니다.
+  issues: write # 이슈에 대한 쓰기 권한을 명시적으로 부여
   
 jobs:
   create_branch:
