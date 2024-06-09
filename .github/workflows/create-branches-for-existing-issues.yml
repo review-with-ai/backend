@@ -1,0 +1,41 @@
+name: Create Branches for Existing Issues
+
+on:
+  workflow_dispatch: # 수동으로 실행하기 위한 트리거
+
+jobs:
+  create_branches:
+    runs-on: ubuntu-latest # 또는 원하는 환경 설정
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch issues from GitHub
+        id: fetch_issues
+        run: |
+          issues=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/issues?state=open")
+          echo "${issues}" > issues.json
+
+      - name: Parse and create branches
+        run: |
+          issues=$(jq -r '.[] | select(.pull_request == null) | .number,.title' issues.json)
+          while IFS= read -r issue_number && IFS= read -r issue_title; do
+            branch_name="issue-${issue_number}-${issue_title// /-}"
+            branch_name=${branch_name//[^a-zA-Z0-9\-]/} # 브랜치 이름에 사용할 수 없는 문자는 제거
+            git checkout -b "$branch_name"
+            git push origin "$branch_name"
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -X POST \
+                 -d "{\"body\": \"Branch [${branch_name}](https://github.com/${{ github.repository }}/tree/${branch_name}) created for this issue.\"}" \
+                 "https://api.github.com/repos/${{ github.repository }}/issues/${issue_number}/comments"
+          done <<< "$issues"
+
+      - name: Clean up
+        run: |
+          rm issues.json
+
