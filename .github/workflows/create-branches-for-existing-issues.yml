@@ -3,6 +3,9 @@ name: Create Branches for Existing Issues
 on:
   workflow_dispatch: # 수동으로 실행하기 위한 트리거
 
+permissions:
+  contents: write
+  
 jobs:
   create_branches:
     runs-on: ubuntu-latest # 또는 원하는 환경 설정
