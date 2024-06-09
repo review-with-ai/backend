@@ -3,7 +3,10 @@ name: Create Branch on Issue
 on:
   issues:
     types: [opened]
-
+    
+permissions:
+  contents: write # contents에 대한 쓰기 권한을 부여합니다.
+  
 jobs:
   create_branch:
     runs-on: ubuntu-latest
