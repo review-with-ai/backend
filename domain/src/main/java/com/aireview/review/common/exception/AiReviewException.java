@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AiReviewException extends RuntimeException {
+public abstract class AiReviewException extends RuntimeException {
     private ErrorCode errorCode;
 }

@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @Entity
 @NoArgsConstructor
@@ -55,12 +56,50 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "has_subscribed", columnDefinition = "tinyint(1)", nullable = false)
     @NotNull
+    @Accessors(fluent = true)
+    @Getter
     private boolean hasSubscribed;
 
     @Column(name = "status", columnDefinition = "enum('ENABLED','BLOCKED','DELETED')", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private Status status;
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public @UserName String getName() {
+        return this.name;
+    }
+
+    public @Nickname String getNickname() {
+        return this.nickname;
+    }
+
+    public @Password(groups = {UserValidationGroups.USER.class}) String getPassword() {
+        return this.password;
+    }
+
+    public @Email(regexp = "[\\w~\\-.+]+@[\\w~\\-]+(\\.[\\w~\\-]+)+", message = "{Email}") String getEmail() {
+        return this.email;
+    }
+
+    public @NotNull(groups = {UserValidationGroups.OAuthUser.class}) OAuthProvider getOauthProvider() {
+        return this.oauthProvider;
+    }
+
+    public @NotBlank(groups = {UserValidationGroups.OAuthUser.class}) String getOauthUserId() {
+        return this.oauthUserId;
+    }
+
+    public @NotNull Status getStatus() {
+        return this.status;
+    }
+
+    public @NotNull boolean hasSubscribed() {
+        return this.hasSubscribed;
+    }
 
     public enum Status {
         ENABLED, BLOCKED, DELETED;
@@ -93,5 +132,9 @@ public class User extends BaseTimeEntity {
         this.oauthUserId = oAuthUserId;
         this.hasSubscribed = hasSubscribed;
         this.status = status;
+    }
+
+    public void updateSubscriptionStatus(boolean hasSubscribed){
+        this.hasSubscribed = hasSubscribed;
     }
 }

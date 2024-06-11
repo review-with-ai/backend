@@ -20,7 +20,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({AiReviewException.class})
-    public ResponseEntity<ErrorResponse> refreshTokenException(AiReviewException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> aireviewException(AiReviewException ex, HttpServletRequest request) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorResponse errorResponse = new ErrorResponse(errorCode, request.getRequestURL().toString());
         return ResponseEntity

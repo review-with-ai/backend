@@ -84,13 +84,20 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/manage/beans").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/manage/metrics/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/manage/env").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscription/kakao/approve").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscription/kakao/fail").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscription/kakao/cancel").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/coupon/fcfs").hasRole(Role.USER.name())
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAfter(jwtAuthenticationFilter, ExceptionTranslationFilter.class)
                 .exceptionHandling(handler -> handler

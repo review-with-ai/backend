@@ -4,6 +4,7 @@ import com.aireview.review.domains.user.domain.OAuthProvider;
 import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.domains.user.domain.UserRepository;
 import com.aireview.review.domains.user.exception.DuplicateEmailException;
+import com.aireview.review.domains.user.exception.UserNotFoundException;
 import com.aireview.review.validation.UserValidationGroups;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -57,5 +58,17 @@ public class UserService {
         Set<ConstraintViolation<User>> validate = validator.validate(user, Default.class, UserValidationGroups.OAuthUser.class);
 
         return userRepository.save(user);
+    }
+
+    public boolean hasSubscribed(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.INSTANCE);
+        return user.hasSubscribed();
+    }
+
+    public void updateSubscriptionStatus(Long userId, boolean hasSubscribed){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.INSTANCE);
+        user.updateSubscriptionStatus(hasSubscribed);
     }
 }
