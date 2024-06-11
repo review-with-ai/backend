@@ -1,21 +1,17 @@
 package com.aireview.review.service;
 
-import com.aireview.review.domains.subscription.Payment;
-import com.aireview.review.domains.subscription.PaymentRepository;
-import com.aireview.review.domains.subscription.Subscription;
-import com.aireview.review.domains.subscription.SubscriptionRepository;
+import com.aireview.review.domains.subscription.*;
 import com.aireview.review.domains.subscription.exception.AlreadySubscribedException;
 import com.aireview.review.domains.subscription.exception.PayRequestNotFoundException;
 import com.aireview.review.domains.subscription.exception.PaymentApprovalFailException;
 import com.aireview.review.service.kakaopay.*;
-import com.aireview.review.service.slack.SlackMessage;
-import com.aireview.review.service.slack.SlackNotificationFeign;
 import feign.FeignException;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +40,9 @@ public class SubscriptionService {
 
     private final KakaoPayFeign feign;
 
-    private final SlackNotificationFeign slackNotificationFeign;
-
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private String payment_approval_url;
 
@@ -150,8 +146,7 @@ public class SubscriptionService {
         );
         paymentRepository.save(payment);
         userService.updateSubscriptionStatus(subscription.getUserId(), true);
-        slackNotificationFeign.sendMessage(new SlackMessage(
-                String.format("구독 및 카카오 결제 완료%n사용자ID: %s%n발생시각: %s", subscription.getUserId(), payment.getTimestamp())));
+        applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, subscription.getUserId(), payment));
     }
 
     private SavedPayRequest retrieveSavedPayRequest(String tempOrderId) {
