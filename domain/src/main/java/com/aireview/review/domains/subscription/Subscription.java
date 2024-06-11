@@ -34,7 +34,7 @@ public class Subscription extends BaseTimeEntity {
     @Column(name = "cancelled_at", columnDefinition = "datetime")
     private LocalDateTime cancelledAt;
 
-    @Column(name = "status", columnDefinition = "enum('PENDING', 'ACTIVE','CANCELLED','EXPIRED')", nullable = false)
+    @Column(name = "status", columnDefinition = "enum('ACTIVE','CANCEL','EXPIRED')", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -42,7 +42,7 @@ public class Subscription extends BaseTimeEntity {
     private String sid;
 
     public enum Status {
-        PENDING, ACTIVE, EXPIRED;
+        ACTIVE, EXPIRED, CANCEL;
     }
 
     public static Subscription of(Long userId, String sid) {
@@ -69,7 +69,7 @@ public class Subscription extends BaseTimeEntity {
         this.sid = sid;
     }
 
-    public void setSid(String sid){
+    public void setSid(String sid) {
         this.sid = sid;
     }
 }
