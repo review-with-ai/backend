@@ -8,6 +8,8 @@ import com.aireview.review.domains.subscription.exception.AlreadySubscribedExcep
 import com.aireview.review.domains.subscription.exception.PayRequestNotFoundException;
 import com.aireview.review.domains.subscription.exception.PaymentApprovalFailException;
 import com.aireview.review.service.kakaopay.*;
+import com.aireview.review.service.slack.SlackMessage;
+import com.aireview.review.service.slack.SlackNotificationFeign;
 import feign.FeignException;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentService {
+public class SubscriptionService {
     private static final int MONTHLY_SUBSCRIPTION_FEE = 1000;
 
     private static final String MONTHLY_SUBSCRIPTION_NAME = "월구독권";
@@ -41,6 +43,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     private final KakaoPayFeign feign;
+
+    private final SlackNotificationFeign slackNotificationFeign;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -146,6 +150,8 @@ public class PaymentService {
         );
         paymentRepository.save(payment);
         userService.updateSubscriptionStatus(subscription.getUserId(), true);
+        slackNotificationFeign.sendMessage(new SlackMessage(
+                String.format("구독 및 카카오 결제 완료%n사용자ID: %s%n발생시각: %s", subscription.getUserId(), payment.getTimestamp())));
     }
 
     private SavedPayRequest retrieveSavedPayRequest(String tempOrderId) {

@@ -1,10 +1,11 @@
 package com.aireview.review.service.kakaopay;
 
+import com.aireview.review.config.KakaoOpenFeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "kakaoPayFeign", url = "${payment.kakao.host}")
+@FeignClient(name = "kakaoPayFeign", url = "${payment.kakao.host}", configuration = KakaoOpenFeignConfiguration.class)
 public interface KakaoPayFeign {
 
     @PostMapping("/online/v1/payment/ready")

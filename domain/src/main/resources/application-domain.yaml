@@ -56,6 +56,8 @@ jwt:
     client-secret: ${JWT_TOKEN_SECRET}
     expiry-seconds: 6000
     refresh-token-expiry-seconds: 864000
+slack:
+  url: https://hooks.slack.com/services/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
 ---
 spring:
   config:
