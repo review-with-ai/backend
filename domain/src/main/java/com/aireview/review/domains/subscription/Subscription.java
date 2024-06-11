@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @NoArgsConstructor
@@ -32,28 +34,42 @@ public class Subscription extends BaseTimeEntity {
     @Column(name = "cancelled_at", columnDefinition = "datetime")
     private LocalDateTime cancelledAt;
 
-    @Column(name = "status", columnDefinition = "enum('ACTIVE','CANCELLED','EXPIRED')", nullable = false)
+    @Column(name = "status", columnDefinition = "enum('PENDING', 'ACTIVE','CANCELLED','EXPIRED')", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "sid", columnDefinition = "varchar(100)")
+    private String sid;
+
     public enum Status {
-        ACTIVE, CANCELLED, EXPIRED;
+        PENDING, ACTIVE, EXPIRED;
     }
 
-    public static Subscription of(Long userId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt) {
-        return new Subscription(userId, startDate, endDate, cancelledAt, Status.ACTIVE);
+    public static Subscription of(Long userId, String sid) {
+        LocalDate now = LocalDate.now();
+        LocalDateTime startDate = LocalDateTime.of(now, LocalTime.MIN);
+        LocalDateTime endDate = LocalDateTime.of(now.plusMonths(1), LocalTime.MAX);
+
+        return new Subscription(
+                userId,
+                startDate,
+                endDate,
+                null,
+                Status.ACTIVE,
+                sid
+        );
     }
 
-    public Subscription(
-            Long userId,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            LocalDateTime cancelledAt,
-            Status status) {
+    public Subscription(Long userId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt, Status status, String sid) {
         this.userId = userId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.cancelledAt = cancelledAt;
         this.status = status;
+        this.sid = sid;
+    }
+
+    public void setSid(String sid){
+        this.sid = sid;
     }
 }
