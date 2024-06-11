@@ -9,6 +9,9 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "payment", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"subscription_id", "seq"})
+})
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode

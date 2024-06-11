@@ -1,8 +1,6 @@
 package com.aireview.review.service.slack;
 
 import com.aireview.review.domains.subscription.PaymentSuccessEvent;
-import com.aireview.review.service.slack.SlackMessage;
-import com.aireview.review.service.slack.SlackNotificationFeign;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -12,7 +10,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
-public class SlackNotificationWithPaymentSuccessEventHander {
+public class SlackNotificationWithPaymentSuccessEventHandler {
     @Value("${server.environment}")
     private String environment;
 
@@ -31,7 +29,7 @@ public class SlackNotificationWithPaymentSuccessEventHander {
                 String.format(messageFormat,
                         environment,
                         paymentSuccessEvent.getUserId(),
-                        paymentSuccessEvent.getPayment().getSubscriptionId(),
+                        paymentSuccessEvent.getPayment().getSeq(),
                         paymentSuccessEvent.getPayment().getTimestamp())));
 
     }

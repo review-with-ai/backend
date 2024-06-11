@@ -13,8 +13,10 @@ public class SavedPayRequest {
     private String tid;
     private String tempOrderId;
     private String cid;
-    private String userId;
+    private String tempUserId;
     private int totalAmount;
     private String itemName;
     private LocalDateTime createdAt;
+    private byte seq;
+    private Long userId;
 }

@@ -1,7 +1,7 @@
 package com.aireview.review.controller;
 
 import com.aireview.review.authentication.CustomAuthenticatedPrincipal;
-import com.aireview.review.service.SubscriptionService;
+import com.aireview.review.service.SubscriptionPaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class SubscriptionController {
-    private final SubscriptionService subscriptionService;
+    private final SubscriptionPaymentService subscriptionPaymentService;
 
     @GetMapping("/kakao")
     public ResponseEntity<Void> redirectToKakaoPayment(
             @AuthenticationPrincipal CustomAuthenticatedPrincipal principal
     ) {
-        String redirectUrl = subscriptionService.ready(principal.id());
+        String redirectUrl = subscriptionPaymentService.ready(principal.id());
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, redirectUrl)
                 .build();
@@ -35,20 +35,20 @@ public class SubscriptionController {
             @RequestParam(value = "order_id") String orderId,
             @RequestParam(value = "pg_token") String pgToken
     ) {
-        subscriptionService.approvePayment(orderId, pgToken);
+        subscriptionPaymentService.approvePayment(orderId, pgToken);
     }
 
     @GetMapping("/kakao/fail")
     public void failKakaoPayment(
             @RequestParam String tempOrderId
     ) {
-        subscriptionService.deleteSavedPayRequest(tempOrderId);
+        subscriptionPaymentService.deleteSavedPayRequest(tempOrderId);
     }
 
     @GetMapping("/kakao/cancel")
     public void cancelKakaoPayment(
             @RequestParam String tempOrderId
     ) {
-        subscriptionService.deleteSavedPayRequest(tempOrderId);
+        subscriptionPaymentService.deleteSavedPayRequest(tempOrderId);
     }
 }

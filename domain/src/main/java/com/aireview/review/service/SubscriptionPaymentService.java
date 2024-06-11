@@ -1,7 +1,6 @@
 package com.aireview.review.service;
 
 import com.aireview.review.domains.subscription.*;
-import com.aireview.review.domains.subscription.exception.AlreadySubscribedException;
 import com.aireview.review.domains.subscription.exception.PayRequestNotFoundException;
 import com.aireview.review.domains.subscription.exception.PaymentApprovalFailException;
 import com.aireview.review.service.kakaopay.*;
@@ -15,13 +14,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class SubscriptionService {
+public class SubscriptionPaymentService {
     private static final int MONTHLY_SUBSCRIPTION_FEE = 1000;
 
     private static final String MONTHLY_SUBSCRIPTION_NAME = "월구독권";
@@ -67,17 +67,24 @@ public class SubscriptionService {
 
 
     public String ready(Long userId) {
-        if (userService.hasSubscribed(userId)) {
-            throw AlreadySubscribedException.INSTANCE;
+        Optional<Subscription> subscription = subscriptionRepository.findByUserId(userId);
+
+        byte seq;
+        if (subscription.isPresent()) {
+            byte lastSeq = paymentRepository.findMaxSeqBySubscriptionId(subscription.get().getId()).byteValue();
+            seq = (byte) (lastSeq + 1);
+        } else {
+            seq = 1;
         }
 
         String temp_order_id = UUID.randomUUID().toString();
+        String temp_user_id = UUID.randomUUID().toString();
 
         KakaoPayReadyRequest request = new KakaoPayReadyRequest(
                 cid,
                 temp_order_id,
-                userId.toString(),
-                MONTHLY_SUBSCRIPTION_NAME,
+                temp_user_id,
+                String.format("%s[%s회차]", MONTHLY_SUBSCRIPTION_NAME, seq),
                 1,
                 MONTHLY_SUBSCRIPTION_FEE,
                 0,
@@ -89,9 +96,7 @@ public class SubscriptionService {
 
         KakaoPayReadyResponse response = feign.ready(request);
 
-        savePayRequest(request, response);
-
-        log.debug(response.toString());
+        savePayRequest(userId, seq, request, response);
 
         return response.getNextRedirectPcUrl();
     }
@@ -100,7 +105,7 @@ public class SubscriptionService {
         return url + "?order_id=" + tempOrderId;
     }
 
-    private void savePayRequest(KakaoPayReadyRequest request, KakaoPayReadyResponse response) {
+    private void savePayRequest(Long userId, byte seq, KakaoPayReadyRequest request, KakaoPayReadyResponse response) {
         redisTemplate.opsForValue()
                 .set(PAY_REQUEST_KEY_PREFIX + request.getPartnerOrderId(),
                         new SavedPayRequest(
@@ -110,9 +115,10 @@ public class SubscriptionService {
                                 request.getPartnerUserId(),
                                 request.getTotalAmount(),
                                 request.getItemName(),
-                                response.getCreatedAt()
-                        )
-                );
+                                response.getCreatedAt(),
+                                seq,
+                                userId
+                        ));
     }
 
     public void approvePayment(String tempOrderId, String pgToken) {
@@ -124,14 +130,18 @@ public class SubscriptionService {
                     savedPayRequest.getCid(),
                     savedPayRequest.getTid(),
                     savedPayRequest.getTempOrderId(),
-                    savedPayRequest.getUserId(),
+                    savedPayRequest.getTempUserId(),
                     pgToken
             ));
         } catch (FeignException exception) {
             throw PaymentApprovalFailException.INSTANCE;
         }
 
-        Subscription subscription = Subscription.of(Long.parseLong(response.getPartnerUserId()), response.getSid());
+        Long userId = savedPayRequest.getUserId();
+
+        Subscription subscription = subscriptionRepository.findById(userId)
+                .orElseGet(() -> Subscription.of(userId, response.getSid()));
+
         subscriptionRepository.save(subscription);
 
         Payment payment = new Payment(
@@ -139,14 +149,15 @@ public class SubscriptionService {
                 response.getTid(),
                 response.getSid(),
                 response.getAmount().getTotal(),
-                (byte) 1,
+                savedPayRequest.getSeq(),
                 Payment.EventType.SUCCESS,
                 null,
                 response.getApprovedAt()
         );
+
         paymentRepository.save(payment);
-        userService.updateSubscriptionStatus(subscription.getUserId(), true);
-        applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, subscription.getUserId(), payment));
+        userService.updateSubscriptionStatus(userId, true);
+        applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, userId, payment));
     }
 
     private SavedPayRequest retrieveSavedPayRequest(String tempOrderId) {
