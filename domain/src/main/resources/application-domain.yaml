@@ -1,3 +1,5 @@
+server:
+  host: ${SERVER_HOST}
 spring:
   messages:
     basename: errors
@@ -26,6 +28,34 @@ spring:
   flyway:
     enabled: true
     validateMigrationNaming: true
+  data:
+    redis:
+      host: redis
+      port: 6379
+      connect-timeout: 60s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+payment:
+  kakao:
+    host: https://open-api.kakaopay.com
+    cid: ${PAYMENT_KAKAO_CID}
+    secret-key: ${PAYMENT_KAKAO_SECRETKEY}
+secret:
+  encoder:
+    secret: ${PASSWORD_ENCODER_SECRET}
+    salt-length: 16
+    iteration: 1234
+jwt:
+  token:
+    header: X-AIREVIEW-AUTH
+    issuer: aireview
+    client-secret: ${JWT_TOKEN_SECRET}
+    expiry-seconds: 6000
+    refresh-token-expiry-seconds: 864000
 ---
 spring:
   config:

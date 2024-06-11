@@ -1,7 +1,17 @@
 spring:
   profiles:
-    include: db, secret, oauth
+    include: domain,  oauth
 ---
+spring:
+  config:
+    activate:
+      on-profile: local, dev
+  security:
+    debug: true
+  session:
+    redis:
+      namespace: aireview
+    timeout: 3600
 server:
   servlet:
     session:
@@ -14,28 +24,8 @@ server:
     max-connections: 100
     accept-count: 10
     connection-timeout: 2000
-spring:
-  config:
-    activate:
-      on-profile: local, dev
-  security:
-    debug: true
-  session:
-    redis:
-      namespace: aireview:session
-    timeout: 3600
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: 6379
-      connect-timeout: 60s
-      client-type: lettuce
-      lettuce:
-        pool:
-          max-active: 8
-          max-wait: -1ms
-          max-idle: 8
-          min-idle: 0
+    mbeanregistry:
+      enabled: true
 management:
   server:
     port: 8081
@@ -43,12 +33,17 @@ management:
     enabled-by-default: true
     web:
       base-path: "/manage"
+      exposure:
+        include: health, beans, metrics, env
+    jmx:
+      exposure:
+        exclude: "*"
 sentry:
   dsn: ${SENTRY_DSN}
   traces-sample-rate: 1.0
   environment: ${ENVIRONMENT}
 swagger:
-  host: ${HOST}
+  host: ${SERVER_HOST}
 ---
 spring:
   config:
@@ -56,20 +51,9 @@ spring:
       on-profile: prod
   security:
     debug: false
-  data:
-    redis:
-      host: redis
-      port: 6379
-      connect-timeout: 60s
-      lettuce:
-        pool:
-          max-active: 8
-          max-wait: -1ms
-          max-idle: 8
-          min-idle: 0
   session:
     redis:
-      namespace: aireview:session
+      namespace: aireview
     timeout: 3600
 management:
   server:

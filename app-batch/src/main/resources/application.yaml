@@ -1,7 +1,11 @@
 spring:
+  profiles:
+    include: domain, oauth
+---
+spring:
   config:
     activate:
-      on-profile: local
+      on-profile: local, dev
   batch:
     job:
       enabled: true

@@ -13,16 +13,17 @@
         </filter>
     </appender>
 
-    <logger name="org.apache.commons" level="info"/>
-    <logger name="org.springframework" level="DEBUG"/>
-    <logger name="org.springframework.security" level="DEUBG"/>
+    <logger name="org.apache.commons" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.security" level="DEBUG"/>
     <logger name="com.aireview.review" level="DEBUG"/>
-    <logger name="org.apache.http.client.protocol" level="error"/>
-    <logger name="org.apache.http" level="info"/>
+    <logger name="org.springframework.cloud.openfeign" level="DEBUG"/>
+    <logger name="com.aireview.review.service.kakaopay.KakaoPayFeign" level="DEBUG"/>
+    <logger name="org.apache.http.client.protocol" level="ERROR"/>
+    <logger name="org.apache.http" level="INFO"/>
 
-    <logger name="org.hibernate" level="info"/>
-    <logger name="org.hibernate.SQL" level="debug"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace"/>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="sentry"/>
