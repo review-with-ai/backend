@@ -24,7 +24,7 @@ public class SlackNotificationWithPaymentSuccessEventHandler {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void createOrUpdateSubscription(PaymentSuccessEvent paymentSuccessEvent) {
+    public void sendPaymentSuccessMessage(PaymentSuccessEvent paymentSuccessEvent) {
         slackNotificationFeign.sendMessage(new SlackMessage(
                 String.format(messageFormat,
                         environment,
