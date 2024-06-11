@@ -48,7 +48,7 @@ public class Subscription extends BaseTimeEntity {
     public static Subscription of(Long userId, String sid) {
         LocalDate now = LocalDate.now();
         LocalDateTime startDate = LocalDateTime.of(now, LocalTime.MIN);
-        LocalDateTime endDate = LocalDateTime.of(now.plusMonths(1), LocalTime.MAX);
+        LocalDateTime endDate = LocalDateTime.of(now.plusYears(100), LocalTime.MAX);
 
         return new Subscription(
                 userId,

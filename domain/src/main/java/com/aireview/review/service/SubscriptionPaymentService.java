@@ -32,8 +32,6 @@ public class SubscriptionPaymentService {
 
     private static final String KAKAO_PAYMENT_CANCEL_PATH = "/api/v1/subscription/kakao/cancel";
 
-    private final UserService userService;
-
     private final SubscriptionRepository subscriptionRepository;
 
     private final PaymentRepository paymentRepository;
@@ -154,9 +152,8 @@ public class SubscriptionPaymentService {
                 null,
                 response.getApprovedAt()
         );
-
         paymentRepository.save(payment);
-        userService.updateSubscriptionStatus(userId, true);
+
         applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, userId, payment));
     }
 
