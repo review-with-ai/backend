@@ -1,6 +1,5 @@
 package com.aireview.review.service;
 
-import com.aireview.review.common.exception.ValidationException;
 import com.aireview.review.domains.subscription.*;
 import com.aireview.review.domains.subscription.exception.PayRequestNotFoundException;
 import com.aireview.review.domains.subscription.exception.PaymentApprovalFailException;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -161,7 +159,7 @@ public class SubscriptionPaymentService {
     private SavedPayRequest retrieveSavedPayRequest(String tempOrderId) {
         return savedPayRequestRepository
                 .getAndDelete(PAY_REQUEST_KEY_PREFIX + tempOrderId)
-                .orElseThrow(PayRequestNotFoundException.INSTANCE);
+                .orElseThrow(() -> PayRequestNotFoundException.INSTANCE);
     }
 
     public void deleteSavedPayRequest(String tempOrderId) {
