@@ -12,6 +12,7 @@ import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -66,7 +67,8 @@ public class UserService {
         return user.hasSubscribed();
     }
 
-    public void updateSubscriptionStatus(Long userId, boolean hasSubscribed){
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateSubscriptionStatus(Long userId, boolean hasSubscribed) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> UserNotFoundException.INSTANCE);
         user.updateSubscriptionStatus(hasSubscribed);
