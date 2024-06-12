@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = "email")
 @ToString
 @Table(name = "user", indexes = {
         @Index(name = "user_email_idx", columnList = "email", unique = true)

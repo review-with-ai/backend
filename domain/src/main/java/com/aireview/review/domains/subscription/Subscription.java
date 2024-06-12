@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = "userId")
 @ToString
 public class Subscription extends BaseTimeEntity {
 

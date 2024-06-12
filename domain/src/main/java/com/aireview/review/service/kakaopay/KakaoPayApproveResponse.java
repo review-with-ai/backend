@@ -2,13 +2,13 @@ package com.aireview.review.service.kakaopay;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KakaoPayApproveResponse {
     private String aid;
@@ -25,5 +25,6 @@ public class KakaoPayApproveResponse {
     private LocalDateTime createdAt;
     private LocalDateTime approvedAt;
     private String payload;
+
 
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 })
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"subscriptionId", "seq"})
 @ToString
 public class Payment {
     @Id
