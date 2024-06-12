@@ -1,14 +1,18 @@
 package com.aireview.review.login.usernamepassword;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UsernamePasswordLoginRequest {
-    private final String username;
-    private final String password;
 
-    public UsernamePasswordLoginRequest(String username, String password) {
-        this.username = username;
+    private String email;
+
+    private String password;
+
+    public UsernamePasswordLoginRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 }

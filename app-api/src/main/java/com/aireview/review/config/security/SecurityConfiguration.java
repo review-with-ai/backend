@@ -1,9 +1,10 @@
 package com.aireview.review.config.security;
 
-import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.authentication.jwt.JwtAuthenticationFilter;
 import com.aireview.review.authentication.jwt.JwtAuthenticationProvider;
 import com.aireview.review.authentication.jwt.JwtConfig;
+import com.aireview.review.authentication.jwt.JwtService;
+import com.aireview.review.config.SecretEncoderConfig;
 import com.aireview.review.login.LoginFailureHandler;
 import com.aireview.review.login.Role;
 import com.aireview.review.login.oauth.OAuth2AuthenticationSuccessHandler;
@@ -27,7 +28,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -79,15 +79,18 @@ public class SecurityConfiguration {
             EntryPointUnauthenticatedHandler entryPointUnauthenticatedHandler,
             JwtAuthenticationFilter jwtAuthenticationFilter
     ) throws Exception {
-        // TODO: 4/29/24 CSRF 설정 필요
+        // TODO: 4/29/24 CSRF,CORS 설정 필요
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/coupon/fcfs").hasRole(Role.USER.name())
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAfter(jwtAuthenticationFilter, ExceptionTranslationFilter.class)
                 .exceptionHandling(handler -> handler
@@ -120,14 +123,6 @@ public class SecurityConfiguration {
         return providerManager;
     }
 
-    @Bean
-    public PasswordEncoder pbk2PasswordEncoder(SecretEncoderConfig config) {
-        return new Pbkdf2PasswordEncoder(
-                config.getSecret(),
-                config.getSaltLength(),
-                config.getIteration(),
-                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
-    }
 
     @Bean
     public JsonUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(

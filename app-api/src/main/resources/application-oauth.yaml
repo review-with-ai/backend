@@ -5,18 +5,17 @@ spring:
         registration:
           naver:
             client-name: Naver
-            client-id: Isfonpy9Gyj8N3RwjPcc
-            client-secret: qyqJJJAwwK
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
+            redirect-uri: "http://${HOST}/login/oauth2/code/naver"
           kakao:
             client-name: Kakao
-            client-id: f13bafaa368516976df36d5f01195c22
+            client-id: ${KAKAO_CLIENT_ID}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-
+            redirect-uri: "http://${HOST}/login/oauth2/code/kakao"
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -30,4 +29,3 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-info-authentication-method: header
             user-name-attribute: kakao_account
-

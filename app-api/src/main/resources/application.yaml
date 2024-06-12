@@ -1,6 +1,76 @@
 spring:
   profiles:
     include: db, secret, oauth
+---
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 10
+    max-connections: 100
+    accept-count: 10
+    connection-timeout: 2000
+spring:
+  config:
+    activate:
+      on-profile: local, dev
+  security:
+    debug: true
+  session:
+    redis:
+      namespace: aireview:session
+    timeout: 3600
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      connect-timeout: 60s
+      client-type: lettuce
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+management:
+  server:
+    port: 8081
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: "/manage"
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  environment: ${ENVIRONMENT}
+swagger:
+  host: ${HOST}
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  security:
+    debug: false
+  data:
+    redis:
+      host: redis
+      port: 6379
+      connect-timeout: 60s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+  session:
+    redis:
+      namespace: aireview:session
+    timeout: 3600
 management:
   server:
     port: 8081
@@ -20,55 +90,18 @@ management:
   health:
     diskspace:
       enabled: false
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  devtools:
-    restart:
-      enabled: false
-    livereload:
-      enabled: true
-  security:
-    debug: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password:
-  session:
-    store-type: redis
-    redis:
-      namespace: aireview:session
-    timeout: 3600
 server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
   tomcat:
     threads:
-      max: 10
-      min-spare: 10
-    max-connections: 100
+      max: 200
+      min-spare:
     accept-count: 10
-    connection-timeout: 2000
-logging:
-  level:
-    root: INFO
-    org:
-      springframework:
-        web: DEBUG
-      hibernate:
-        type:
-          descriptor:
-            sql: trace
----
-spring:
-  config:
-    activate:
-      on-profile: dev
----
-spring:
-  config:
-    activate:
-      on-profile: prod
----
-
+    max-connections: 8192
+    connection-timeout: 1000
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0

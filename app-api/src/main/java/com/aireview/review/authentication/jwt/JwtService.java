@@ -1,5 +1,8 @@
 package com.aireview.review.authentication.jwt;
 
+import com.aireview.review.authentication.jwt.exception.RefreshTokenExpiredException;
+import com.aireview.review.authentication.jwt.exception.RefreshTokenNotIssuedByApp;
+import com.aireview.review.authentication.jwt.exception.RefreshTokenNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -8,7 +11,6 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.Getter;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -56,22 +58,23 @@ public class JwtService {
         return new Jwt(accessToken, refreshToken);
     }
 
-    public Jwt refreshToken(Long userId, String refreshToken) throws BadRequestException {
+    public Jwt refreshToken(Long userId, String refreshToken) {
         try {
             Claims claims = verify(refreshToken);
             String originalRefreshToken = refreshTokenRepository.findById(userId)
-                    .orElseThrow(() -> new BadRequestException("refresh token not exists"));
+                    .orElseThrow(() -> RefreshTokenNotValidException.INSTANCE);
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(userId);
-                throw new BadRequestException("re-login is required. refresh token may have been hijacked");
+                throw RefreshTokenNotValidException.INSTANCE;
             }
             return createJwt(claims.userKey, claims.email, claims.roles);
         } catch (TokenExpiredException expiredException) {
-            throw new BadRequestException("refresh token has been expired. re-login is required");
-        } catch (JWTVerificationException jwtVerificationException) {
-            throw new BadRequestException("refresh token is not valid");
+            throw RefreshTokenExpiredException.INSTANCE;
+        } catch (JWTVerificationException exception) {
+            throw RefreshTokenNotIssuedByApp.INSTANCE;
         }
     }
+
 
     private String createAccessToken(Claims claims) {
         Date now = new Date();

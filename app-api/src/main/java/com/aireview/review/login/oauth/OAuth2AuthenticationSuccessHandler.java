@@ -1,7 +1,7 @@
 package com.aireview.review.login.oauth;
 
 import com.aireview.review.authentication.jwt.JwtService;
-import com.aireview.review.domain.user.User;
+import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.login.LoginSuccessHandler;
 import com.aireview.review.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,14 +34,14 @@ public class OAuth2AuthenticationSuccessHandler extends LoginSuccessHandler {
 
         OAuth2UserInfo userInfo = getOAuth2UserInfo(oauthProvider, oauth2User);
 
-        Optional<User> oauthUser = userService.findOauthUser(oauthProvider, userInfo.getOauthUserId());
+        Optional<User> oauthUser = userService.findOauthUser(userInfo.getOauthProvider(), userInfo.getOauthUserId());
         return oauthUser
                 .orElseGet(() -> persistUser(userInfo));
     }
 
 
     private OAuth2UserInfo getOAuth2UserInfo(String oauthProvider, OAuth2User oauth2User) {
-        return OAuth2UserAttributeConverter
+        return OAuth2UserAttribute2OAuthUserInfoConverter
                 .getUserInfoFromOAuth2UserAttribute(oauthProvider, oauth2User.getAttributes());
     }
 
