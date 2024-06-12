@@ -1,5 +1,6 @@
 package com.aireview.review.service;
 
+import com.aireview.review.common.exception.ValidationException;
 import com.aireview.review.domains.subscription.*;
 import com.aireview.review.domains.subscription.exception.PayRequestNotFoundException;
 import com.aireview.review.domains.subscription.exception.PaymentApprovalFailException;
@@ -38,7 +39,7 @@ public class SubscriptionPaymentService {
 
     private final KakaoPayFeign feign;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final SavedPayRequestRepository savedPayRequestRepository;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -104,19 +105,19 @@ public class SubscriptionPaymentService {
     }
 
     private void savePayRequest(Long userId, byte seq, KakaoPayReadyRequest request, KakaoPayReadyResponse response) {
-        redisTemplate.opsForValue()
-                .set(PAY_REQUEST_KEY_PREFIX + request.getPartnerOrderId(),
-                        new SavedPayRequest(
-                                response.getTid(),
-                                request.getPartnerOrderId(),
-                                request.getCid(),
-                                request.getPartnerUserId(),
-                                request.getTotalAmount(),
-                                request.getItemName(),
-                                response.getCreatedAt(),
-                                seq,
-                                userId
-                        ));
+        savedPayRequestRepository.save(
+                PAY_REQUEST_KEY_PREFIX + request.getPartnerOrderId(),
+                new SavedPayRequest(
+                        response.getTid(),
+                        request.getPartnerOrderId(),
+                        request.getCid(),
+                        request.getPartnerUserId(),
+                        request.getTotalAmount(),
+                        request.getItemName(),
+                        response.getCreatedAt(),
+                        seq,
+                        userId
+                ));
     }
 
     public void approvePayment(String tempOrderId, String pgToken) {
@@ -158,18 +159,13 @@ public class SubscriptionPaymentService {
     }
 
     private SavedPayRequest retrieveSavedPayRequest(String tempOrderId) {
-        Object object = redisTemplate.opsForValue()
-                .getAndDelete(PAY_REQUEST_KEY_PREFIX + tempOrderId);
-
-        if (!(object instanceof SavedPayRequest)) {
-            throw PayRequestNotFoundException.INSTANCE;
-        }
-        return (SavedPayRequest) object;
+        return savedPayRequestRepository
+                .getAndDelete(PAY_REQUEST_KEY_PREFIX + tempOrderId)
+                .orElseThrow(PayRequestNotFoundException.INSTANCE);
     }
 
     public void deleteSavedPayRequest(String tempOrderId) {
-        Object object = redisTemplate.opsForValue()
-                .getAndDelete(PAY_REQUEST_KEY_PREFIX + tempOrderId);
+        savedPayRequestRepository.getAndDelete(PAY_REQUEST_KEY_PREFIX + tempOrderId);
     }
 
 }
