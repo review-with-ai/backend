@@ -31,7 +31,7 @@ spring:
     validateMigrationNaming: true
   data:
     redis:
-      host: redis
+      host: ${REDIS_HOST}
       port: 6379
       connect-timeout: 60s
       lettuce:
@@ -40,6 +40,8 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 0
+      repositories:
+        enabled: false
 payment:
   kakao:
     host: https://open-api.kakaopay.com
@@ -59,6 +61,11 @@ jwt:
     refresh-token-expiry-seconds: 864000
 slack:
   url: https://hooks.slack.com/services/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
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  environment: ${ENVIRONMENT}
+  exception-resolver-order: 2147483647
 ---
 spring:
   config:
