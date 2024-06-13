@@ -2,31 +2,34 @@ package com.aireview.review.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-public abstract class RedisRepository<T> {
-    private final ValueOperations<String, Object> ops;
-    private final ObjectMapper objectMapper;
-    private final Class<T> type;
+@Component
+public class RedisRepositoryUtil {
+    private static ValueOperations<String, Object> ops;
+    private static ObjectMapper objectMapper;
 
-    public RedisRepository(RedisTemplate<String, Object> redisTemplate, Class<T> type) {
+    private RedisTemplate<String, Object> redisTemplate;
+    private ObjectMapper objectMapperBean;
+
+    @PostConstruct
+    private void init() {
         ops = redisTemplate.opsForValue();
-        objectMapper = createObjectMapper();
-        this.type = type;
+        objectMapper = objectMapperBean;
     }
 
-    private ObjectMapper createObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper;
+    public RedisRepositoryUtil(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapperBean) {
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapperBean;
     }
 
-    public void save(String key, T value) {
+    public static void save(String key, Object value) {
         try {
             ops.set(key, objectMapper.writeValueAsString(value));
         } catch (JsonProcessingException exception) {
@@ -34,7 +37,7 @@ public abstract class RedisRepository<T> {
         }
     }
 
-    public Optional<T> getAndDelete(String key) {
+    public static <T> Optional<T> getAndDelete(String key, Class<T> type) {
         String json = (String) ops.getAndDelete(key);
         if (StringUtils.isBlank(json)) {
             return Optional.empty();
