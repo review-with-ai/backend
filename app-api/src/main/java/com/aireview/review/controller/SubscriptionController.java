@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubscriptionController {
     private final SubscriptionPaymentService subscriptionPaymentService;
 
-    @GetMapping("/kakao")
+    @GetMapping("/payment")
     public ResponseEntity<Void> redirectToKakaoPayment(
             @AuthenticationPrincipal CustomAuthenticatedPrincipal principal
     ) {
@@ -30,7 +30,7 @@ public class SubscriptionController {
                 .build();
     }
 
-    @GetMapping("/kakao/approve")
+    @GetMapping("/payment/approve")
     public void approveKakaoPayment(
             @RequestParam(value = "order_id") String orderId,
             @RequestParam(value = "pg_token") String pgToken
@@ -38,14 +38,14 @@ public class SubscriptionController {
         subscriptionPaymentService.approvePayment(orderId, pgToken);
     }
 
-    @GetMapping("/kakao/fail")
+    @GetMapping("/payment/fail")
     public void failKakaoPayment(
             @RequestParam String tempOrderId
     ) {
         subscriptionPaymentService.deleteSavedPayRequest(tempOrderId);
     }
 
-    @GetMapping("/kakao/cancel")
+    @GetMapping("/payment/cancel")
     public void cancelKakaoPayment(
             @RequestParam String tempOrderId
     ) {

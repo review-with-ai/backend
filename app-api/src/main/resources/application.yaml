@@ -38,10 +38,6 @@ management:
     jmx:
       exposure:
         exclude: "*"
-sentry:
-  dsn: ${SENTRY_DSN}
-  traces-sample-rate: 1.0
-  environment: ${ENVIRONMENT}
 swagger:
   host: ${SERVER_HOST}
 ---
@@ -86,6 +82,3 @@ server:
     accept-count: 10
     max-connections: 8192
     connection-timeout: 1000
-sentry:
-  dsn: ${SENTRY_DSN}
-  traces-sample-rate: 1.0

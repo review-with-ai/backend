@@ -1,6 +1,7 @@
 package com.aireview.review.service.slack;
 
 import com.aireview.review.domains.subscription.PaymentSuccessEvent;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -25,12 +26,16 @@ public class SlackNotificationWithPaymentSuccessEventHandler {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void sendPaymentSuccessMessage(PaymentSuccessEvent paymentSuccessEvent) {
-        slackNotificationFeign.sendMessage(new SlackMessage(
-                String.format(messageFormat,
-                        environment,
-                        paymentSuccessEvent.getUserId(),
-                        paymentSuccessEvent.getPayment().getSeq(),
-                        paymentSuccessEvent.getPayment().getTimestamp())));
+        try {
+            slackNotificationFeign.sendMessage(new SlackMessage(
+                    String.format(messageFormat,
+                            environment,
+                            paymentSuccessEvent.getUserId(),
+                            paymentSuccessEvent.getPayment().getSeq(),
+                            paymentSuccessEvent.getPayment().getTimestamp())));
 
+        } catch (Exception exception) {
+            Sentry.captureException(exception);
+        }
     }
 }
