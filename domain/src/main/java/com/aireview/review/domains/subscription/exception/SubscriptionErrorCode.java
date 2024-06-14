@@ -2,11 +2,9 @@ package com.aireview.review.domains.subscription.exception;
 
 import com.aireview.review.common.HttpStatus;
 import com.aireview.review.common.exception.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public enum SubscriptionErrorCode implements ErrorCode {
 
     ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "SUBSCRIPTION_400_1", "이미 구독한 사용자입니다."),
@@ -16,4 +14,10 @@ public enum SubscriptionErrorCode implements ErrorCode {
     private int status;
     private String code;
     private String reason;
+
+    SubscriptionErrorCode(int status, String code, String reason) {
+        this.status = status;
+        this.code = code;
+        this.reason = reason;
+    }
 }
