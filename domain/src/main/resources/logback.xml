@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <appender name="sentry" class="io.sentry.logback.SentryAppender">
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
@@ -18,7 +18,6 @@
     <logger name="org.springframework.security" level="DEBUG"/>
     <logger name="com.aireview.review" level="DEBUG"/>
     <logger name="org.springframework.cloud.openfeign" level="DEBUG"/>
-    <logger name="com.aireview.review.service.kakaopay.KakaoPayFeign" level="DEBUG"/>
     <logger name="org.apache.http.client.protocol" level="ERROR"/>
     <logger name="org.apache.http" level="INFO"/>
 
@@ -26,7 +25,7 @@
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
 
     <root level="INFO">
-        <appender-ref ref="sentry"/>
+<!--        <appender-ref ref="sentry"/>-->
         <appender-ref ref="console"/>
     </root>
 </configuration>

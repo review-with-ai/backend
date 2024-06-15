@@ -60,12 +60,7 @@ jwt:
     expiry-seconds: 6000
     refresh-token-expiry-seconds: 864000
 slack:
-  url: https://hooks.slack.com/services/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
-sentry:
-  dsn: ${SENTRY_DSN}
-  traces-sample-rate: 1.0
-  environment: ${ENVIRONMENT}
-  exception-resolver-order: 2147483647
+  url: ${SLACK_URL}
 ---
 spring:
   config:
