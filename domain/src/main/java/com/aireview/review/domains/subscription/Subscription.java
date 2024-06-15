@@ -38,14 +38,17 @@ public class Subscription extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "sid", columnDefinition = "varchar(100)")
+    @Column(name = "sid", columnDefinition = "varchar(100)", nullable = false, updatable = false)
     private String sid;
+
+    @Column(name = "partner_user_id", columnDefinition = "varchar(50)", nullable = false, updatable = false)
+    private String partnerUserId;
 
     public enum Status {
         ACTIVE, EXPIRED, CANCEL;
     }
 
-    public static Subscription of(Long userId, String sid) {
+    public static Subscription of(Long userId, String sid, String partnerUserId) {
         LocalDate now = LocalDate.now();
         LocalDateTime startDate = LocalDateTime.of(now, LocalTime.MIN);
         LocalDateTime endDate = LocalDateTime.of(now.plusYears(100), LocalTime.MAX);
@@ -56,20 +59,19 @@ public class Subscription extends BaseTimeEntity {
                 endDate,
                 null,
                 Status.ACTIVE,
-                sid
+                sid,
+                partnerUserId
         );
     }
 
-    public Subscription(Long userId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt, Status status, String sid) {
+    public Subscription(Long userId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime cancelledAt, Status status, String sid, String partnerUserId) {
         this.userId = userId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.cancelledAt = cancelledAt;
         this.status = status;
         this.sid = sid;
+        this.partnerUserId = partnerUserId;
     }
 
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
 }

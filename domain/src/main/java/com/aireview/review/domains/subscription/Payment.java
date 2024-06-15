@@ -9,9 +9,6 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payment", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"subscription_id", "seq"})
-})
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = {"subscriptionId", "seq"})
@@ -30,6 +27,9 @@ public class Payment {
     @Column(name = "sid", columnDefinition = "varchar(100)", updatable = false)
     private String sid;
 
+    @Column(name = "order_id", columnDefinition = "varchar(100)", updatable = false)
+    private String orderId;
+
     @Column(name = "amount", columnDefinition = "int unsigned", nullable = false, updatable = false)
     private int amount;
 
@@ -46,18 +46,23 @@ public class Payment {
     @Column(name = "timestamp", columnDefinition = "datetime", updatable = false, nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "created_by", columnDefinition = "bigint", updatable = false, nullable = false)
+    private Long createdBy;
+
     public enum EventType {
         SUCCESS, FAIL, CANCELLED;
     }
 
-    public Payment(Long subscriptionId, String tid, String sid, int amount, byte seq, EventType eventType, String details, LocalDateTime timestamp) {
+    public Payment(Long subscriptionId, String tid, String sid, String orderId, int amount, byte seq, EventType eventType, String details, LocalDateTime timestamp, Long createdBy) {
         this.subscriptionId = subscriptionId;
         this.tid = tid;
         this.sid = sid;
         this.amount = amount;
+        this.orderId = orderId;
         this.seq = seq;
         this.eventType = eventType;
         this.details = details;
         this.timestamp = timestamp;
+        this.createdBy = createdBy;
     }
 }
