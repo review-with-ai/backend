@@ -23,6 +23,13 @@ public class ErrorResponse {
         this.path = path;
     }
 
+    public ErrorResponse(ErrorCode errorCode, String message, String path) {
+        this.code = errorCode.getCode();
+        this.reason = String.format("%s(%s)", errorCode.getReason(), message);
+        this.timestamp = LocalDateTime.now();
+        this.path = path;
+    }
+
     public ErrorResponse(String code, String reason, String path) {
         this.code = code;
         this.reason = reason;
