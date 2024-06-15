@@ -9,4 +9,9 @@ public abstract class AiReviewException extends RuntimeException {
     protected AiReviewException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
+
+    protected AiReviewException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
 }

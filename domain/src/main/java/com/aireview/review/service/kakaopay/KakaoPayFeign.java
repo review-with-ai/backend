@@ -17,4 +17,9 @@ public interface KakaoPayFeign {
     KakaoPayApproveResponse approve(
             @RequestBody KakaoPayApproveRequest kakaoPayApproveRequest
     );
+
+    @PostMapping("/online/v1/payment/subscription")
+    KakaoPayRecurringPayResponse recurringPay(
+            @RequestBody KakaoPayRecurringPayRequest recurringPayRequest
+    );
 }

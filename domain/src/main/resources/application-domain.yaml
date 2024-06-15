@@ -42,6 +42,10 @@ spring:
           min-idle: 0
       repositories:
         enabled: false
+  cloud:
+    openfeign:
+      httpclient:
+        connection-timeout: 5000
 payment:
   kakao:
     host: https://open-api.kakaopay.com

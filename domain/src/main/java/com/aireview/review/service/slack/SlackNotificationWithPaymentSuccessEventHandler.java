@@ -30,7 +30,7 @@ public class SlackNotificationWithPaymentSuccessEventHandler {
             slackNotificationFeign.sendMessage(new SlackMessage(
                     String.format(messageFormat,
                             environment,
-                            paymentSuccessEvent.getUserId(),
+                            paymentSuccessEvent.getPayment().getCreatedBy(),
                             paymentSuccessEvent.getPayment().getSeq(),
                             paymentSuccessEvent.getPayment().getTimestamp())));
 

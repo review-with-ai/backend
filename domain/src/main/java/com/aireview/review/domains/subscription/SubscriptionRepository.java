@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    Optional<Subscription> findByUserId(Long userId);
+    Optional<Subscription> findByUserIdAndStatus(Long userId, Subscription.Status status);
 }
