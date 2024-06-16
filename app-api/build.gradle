@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.4'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'io.sentry.jvm.gradle' version '4.5.0'
 }
 
 group = 'com.aireview'
@@ -37,11 +36,5 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-sentry{
-    includeSourceContext = true
-    projectName = "ai-review"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 

@@ -1,6 +1,7 @@
 package com.aireview.review.model;
 
 import com.aireview.review.common.exception.ErrorCode;
+import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,11 @@ public class ErrorResponse {
 
     public ErrorResponse(ErrorCode errorCode, String message, String path) {
         this.code = errorCode.getCode();
-        this.reason = String.format("%s(%s)", errorCode.getReason(), message);
+        if (StringUtils.isBlank(message)) {
+            this.reason = errorCode.getReason();
+        } else {
+            this.reason = String.format("%s(%s)", errorCode.getReason(), message);
+        }
         this.timestamp = LocalDateTime.now();
         this.path = path;
     }

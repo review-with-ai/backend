@@ -22,4 +22,7 @@ public interface KakaoPayFeign {
     KakaoPayRecurringPayResponse recurringPay(
             @RequestBody KakaoPayRecurringPayRequest recurringPayRequest
     );
+
+    @PostMapping("/online/v1/payment/manage/subscription/inactive")
+    KakaoPayInactivateResponse invalidateSid(KakaoPayInactivateRequest request);
 }

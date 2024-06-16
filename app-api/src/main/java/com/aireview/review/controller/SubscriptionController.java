@@ -57,4 +57,11 @@ public class SubscriptionController {
         subscriptionPaymentService.recurringPay(authenticatedPrincipal.id(), subscriptionId);
     }
 
+    @GetMapping("/inactive")
+    public void inactive(
+            @AuthenticationPrincipal CustomAuthenticatedPrincipal authenticatedPrincipal
+            ) {
+        subscriptionPaymentService.inactive(authenticatedPrincipal.id());
+    }
+
 }

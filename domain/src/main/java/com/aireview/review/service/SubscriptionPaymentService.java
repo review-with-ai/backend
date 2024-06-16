@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -67,7 +67,8 @@ public class SubscriptionPaymentService {
 
     //1회차 결제
     public String ready(Long userId) {
-        Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndStatus(userId, Subscription.Status.ACTIVE);
+        // TODO: 6/16/24 취소된 사용권있는지 살펴봐야함.
+        Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndStatusIn(userId, Set.of(Subscription.Status.ACTIVE, Subscription.Status.CANCEL));
 
         if (subscription.isPresent()) {
             throw AlreadySubscribedException.INSTANCE;
@@ -136,7 +137,7 @@ public class SubscriptionPaymentService {
 
         Long userId = savedPayRequest.getUserId();
 
-        subscriptionRepository.findByUserIdAndStatus(userId, Subscription.Status.ACTIVE)
+        subscriptionRepository.findByUserIdAndStatusIn(userId, Set.of(Subscription.Status.ACTIVE, Subscription.Status.CANCEL))
                 .ifPresent(subscription -> {
                     throw AlreadySubscribedException.INSTANCE;
                 });
@@ -181,10 +182,14 @@ public class SubscriptionPaymentService {
             throw new NotUserSubscriptionException("subscription " + subscriptionId + "is not owned by user " + userId);
         }
 
-        LocalDate dueDate = subscription.getStartDate().plusMonths(1).toLocalDate();
-        if (!LocalDate.now().equals(dueDate)) {
-            throw new RenewalNotDueException("renewal requires at " + subscription.getEndDate().minusDays(1));
+        if (subscription.isCancelled()) {
+            throw CancelledSubscriptionException.INSTANCE;
         }
+
+        if (!subscription.isRenewalDue()) {
+            throw new RenewalNotDueException("renewal is required at " + subscription.getRenewalDate().toString());
+        }
+
 
         byte nxtPaymentSeq = (byte) (paymentRepository.findMaxSeqBySubscriptionId(subscriptionId).byteValue() + 1);
         String order_id = UUID.randomUUID().toString();
@@ -213,6 +218,17 @@ public class SubscriptionPaymentService {
         );
         paymentRepository.save(payment);
         applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, payment));
+    }
+
+    public void inactive(Long userId) {
+        Subscription subscription = subscriptionRepository.findByUserIdAndStatusIn(userId, Set.of(Subscription.Status.ACTIVE, Subscription.Status.CANCEL))
+                .orElseThrow(() -> new ResourceNotFoundException(SubscriptionErrorCode.SUBSCRIPTION_NOT_FOUND, String.format("by userId %s", userId)));
+        if (subscription.isCancelled()) {
+            throw CancelledSubscriptionException.INSTANCE;
+        }
+        KakaoPayInactivateResponse response = feign.invalidateSid(new KakaoPayInactivateRequest(cid, subscription.getSid()));
+        subscription.cancel(response.getInactivatedAt());
+        // TODO: 6/16/24 배치로 구독주기 마지막날에 만료시켜야함.
     }
 
 }

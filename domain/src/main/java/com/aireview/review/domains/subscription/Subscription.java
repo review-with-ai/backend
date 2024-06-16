@@ -6,15 +6,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
+@Audited
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of = "userId")
+@EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
 public class Subscription extends BaseTimeEntity {
 
@@ -28,7 +30,7 @@ public class Subscription extends BaseTimeEntity {
     @Column(name = "start_date", columnDefinition = "date", nullable = false, updatable = false)
     private LocalDateTime startDate;
 
-    @Column(name = "end_date", columnDefinition = "date", nullable = false, updatable = false)
+    @Column(name = "end_date", columnDefinition = "date", nullable = false)
     private LocalDateTime endDate;
 
     @Column(name = "cancelled_at", columnDefinition = "datetime")
@@ -38,7 +40,7 @@ public class Subscription extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "sid", columnDefinition = "varchar(100)", nullable = false, updatable = false)
+    @Column(name = "sid", columnDefinition = "varchar(100)")
     private String sid;
 
     @Column(name = "partner_user_id", columnDefinition = "varchar(50)", nullable = false, updatable = false)
@@ -51,7 +53,7 @@ public class Subscription extends BaseTimeEntity {
     public static Subscription of(Long userId, String sid, String partnerUserId) {
         LocalDate now = LocalDate.now();
         LocalDateTime startDate = LocalDateTime.of(now, LocalTime.MIN);
-        LocalDateTime endDate = LocalDateTime.of(now.plusYears(100), LocalTime.MAX);
+        LocalDateTime endDate = LocalDateTime.of(now.plusYears(100).minusDays(1), LocalTime.MAX);
 
         return new Subscription(
                 userId,
@@ -73,5 +75,27 @@ public class Subscription extends BaseTimeEntity {
         this.sid = sid;
         this.partnerUserId = partnerUserId;
     }
+
+    public boolean isRenewalDue() {
+        return LocalDate.now().equals(getRenewalDate());
+    }
+
+    public LocalDate getRenewalDate() {
+        LocalDate thisMonthRenewalDate = LocalDate.now().withDayOfMonth(startDate.getDayOfMonth()).minusDays(1);
+        return thisMonthRenewalDate.isAfter(LocalDate.now()) ? thisMonthRenewalDate : thisMonthRenewalDate.plusMonths(1);
+
+    }
+
+    public void cancel(LocalDateTime inactivatedAt) {
+        this.endDate = LocalDateTime.of(getRenewalDate(), LocalTime.MAX);
+        this.cancelledAt = inactivatedAt;
+        this.sid = null;
+        this.status = Status.CANCEL;
+    }
+
+    public boolean isCancelled() {
+        return status.equals(Status.CANCEL) || status.equals(Status.EXPIRED);
+    }
+
 
 }
