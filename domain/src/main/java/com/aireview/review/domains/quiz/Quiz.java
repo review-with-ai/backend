@@ -10,7 +10,7 @@ import lombok.ToString;
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {"userId", "noteId", "createdAt"})
 @ToString
 public class Quiz extends BaseTimeEntity {
 

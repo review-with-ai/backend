@@ -11,7 +11,7 @@ import lombok.ToString;
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {"userId", "title"})
 @ToString
 public class Category extends BaseTimeEntity {
 

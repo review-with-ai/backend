@@ -1,10 +1,17 @@
 package com.aireview.review.common.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class AiReviewException extends RuntimeException {
+public abstract class AiReviewException extends RuntimeException {
     private ErrorCode errorCode;
+
+    protected AiReviewException(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    protected AiReviewException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
 }

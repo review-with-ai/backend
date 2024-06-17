@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +46,7 @@ public class AccountController {
     @PostMapping("/refresh-token")
     @Operation(summary = "리프레시 토큰 갱신 API", description = "리프레시 토큰으로 새로운 액세스 토큰 및 리프레시 토큰 발급(로그인과 같은 역할)")
     @ApiExceptionExample(RefreshTokenPossibleException.class)
-    public LoginResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) throws BadRequestException {
+    public LoginResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         Jwt jwt = jwtService.refreshToken(refreshTokenRequest.getUserId(), refreshTokenRequest.getRefreshToken());
         return new LoginResponse(jwt.getAccessToken(), jwt.getRefreshToken(), refreshTokenRequest.getUserId());
     }

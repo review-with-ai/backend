@@ -1,7 +1,8 @@
 package com.aireview.review.controller;
 
+import com.aireview.review.common.exception.ResourceNotFoundException;
 import com.aireview.review.domains.user.domain.User;
-import com.aireview.review.domains.user.exception.UserNotFoundException;
+import com.aireview.review.domains.user.exception.UserErrorCode;
 import com.aireview.review.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,6 @@ public class UserController {
     @GetMapping("/{userId}")
     public User findUser(@PathVariable Long userId) {
         return userService.findUser(userId)
-                .orElseThrow(() -> UserNotFoundException.INSTANCE);
+                .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.NOT_FOUND, userId.toString()));
     }
 }

@@ -1,7 +1,6 @@
 package com.aireview.review.domains.note;
 
 import com.aireview.review.domains.BaseTimeEntity;
-import com.aireview.review.domains.category.Category;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.ToString;
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {"userId", "createdAt"})
 @ToString
 public class Note extends BaseTimeEntity {
 
@@ -28,21 +27,21 @@ public class Note extends BaseTimeEntity {
     @Column(name = "content", columnDefinition = "varchar(5000)", nullable = false)
     private String content;
 
-    @ManyToOne(optional = false)
-    private Category category;
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
 
     @Column(name = "is_deleted", columnDefinition = "tinyint(1)", nullable = false)
     private boolean isDeleted;
 
-    public Note of(Long userId, String title, String content, Category category) {
-        return new Note(userId, title, content, category, false);
+    public Note of(Long userId, String title, String content, Long categoryId) {
+        return new Note(userId, title, content, categoryId, false);
     }
 
-    public Note(Long userId, String title, String content, Category category, boolean isDeleted) {
+    public Note(Long userId, String title, String content, Long categoryId, boolean isDeleted) {
         this.userId = userId;
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.categoryId = categoryId;
         this.isDeleted = isDeleted;
     }
 }

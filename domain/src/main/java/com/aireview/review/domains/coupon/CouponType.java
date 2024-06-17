@@ -2,15 +2,12 @@ package com.aireview.review.domains.coupon;
 
 import com.aireview.review.domains.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {"name"})
 @ToString
 public class CouponType extends BaseTimeEntity {
 

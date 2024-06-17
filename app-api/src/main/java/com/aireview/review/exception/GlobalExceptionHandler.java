@@ -3,6 +3,7 @@ package com.aireview.review.exception;
 import com.aireview.review.common.exception.AiReviewException;
 import com.aireview.review.common.exception.ErrorCode;
 import com.aireview.review.model.ErrorResponse;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,15 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({AiReviewException.class})
-    public ResponseEntity<ErrorResponse> refreshTokenException(AiReviewException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> aireviewException(AiReviewException ex, HttpServletRequest request) {
         ErrorCode errorCode = ex.getErrorCode();
-        ErrorResponse errorResponse = new ErrorResponse(errorCode, request.getRequestURL().toString());
+        String message = ex.getMessage();
+        ErrorResponse errorResponse;
+        if (StringUtils.isBlank(message)) {
+            errorResponse = new ErrorResponse(errorCode, message, request.getRequestURL().toString());
+        } else {
+            errorResponse = new ErrorResponse(errorCode, request.getRequestURL().toString());
+        }
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(errorResponse);

@@ -4,4 +4,8 @@ public abstract class ValidationException extends AiReviewException {
     protected ValidationException(ErrorCode errorCode) {
         super(errorCode);
     }
+
+    protected ValidationException(ErrorCode errorCode,String message) {
+        super(errorCode, message);
+    }
 }

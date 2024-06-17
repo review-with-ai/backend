@@ -1,9 +1,11 @@
 package com.aireview.review.service;
 
+import com.aireview.review.common.exception.ResourceNotFoundException;
 import com.aireview.review.domains.user.domain.OAuthProvider;
 import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.domains.user.domain.UserRepository;
 import com.aireview.review.domains.user.exception.DuplicateEmailException;
+import com.aireview.review.domains.user.exception.UserErrorCode;
 import com.aireview.review.validation.UserValidationGroups;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -11,6 +13,7 @@ import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -57,5 +60,18 @@ public class UserService {
         Set<ConstraintViolation<User>> validate = validator.validate(user, Default.class, UserValidationGroups.OAuthUser.class);
 
         return userRepository.save(user);
+    }
+
+    public boolean hasSubscribed(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.NOT_FOUND, userId.toString()));
+        return user.hasSubscribed();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateSubscriptionStatus(Long userId, boolean hasSubscribed) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.NOT_FOUND, userId.toString()));
+        user.updateSubscriptionStatus(hasSubscribed);
     }
 }
