@@ -1,10 +1,10 @@
 package com.aireview.review.login.oauth;
 
+import com.aireview.review.authentication.jwt.JwtConfig;
 import com.aireview.review.authentication.jwt.JwtService;
 import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.login.LoginSuccessHandler;
 import com.aireview.review.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -19,10 +19,10 @@ public class OAuth2AuthenticationSuccessHandler extends LoginSuccessHandler {
     private final UserService userService;
 
     public OAuth2AuthenticationSuccessHandler(
+            JwtConfig jwtConfig,
             JwtService jwtService,
-            ObjectMapper objectMapper,
             UserService userService) {
-        super(jwtService, objectMapper);
+        super(jwtConfig, jwtService);
         this.userService = userService;
     }
 

@@ -18,6 +18,9 @@ import java.util.Date;
 @Component
 @Getter
 public class JwtService {
+    private final String accessTokenName;
+
+    private final String refreshTokenName;
 
     private final String issuer;
 
@@ -35,6 +38,8 @@ public class JwtService {
 
 
     public JwtService(JwtConfig config, RefreshTokenRepository refreshTokenRepository) {
+        this.accessTokenName = config.getAccessTokenName();
+        this.refreshTokenName = config.getRefreshTokenName();
         this.issuer = config.getIssuer();
         this.clientSecret = config.getClientSecret();
         this.expirySeconds = config.getExpirySeconds();
@@ -58,13 +63,13 @@ public class JwtService {
         return new Jwt(accessToken, refreshToken);
     }
 
-    public Jwt refreshToken(Long userId, String refreshToken) {
+    public Jwt refreshToken(String refreshToken) {
         try {
             Claims claims = verify(refreshToken);
-            String originalRefreshToken = refreshTokenRepository.findById(userId)
+            String originalRefreshToken = refreshTokenRepository.findById(claims.userKey)
                     .orElseThrow(() -> RefreshTokenNotValidException.INSTANCE);
             if (!originalRefreshToken.equals(refreshToken)) {
-                deleteRefreshToken(userId);
+                deleteRefreshToken(claims.userKey);
                 throw RefreshTokenNotValidException.INSTANCE;
             }
             return createJwt(claims.userKey, claims.email, claims.roles);

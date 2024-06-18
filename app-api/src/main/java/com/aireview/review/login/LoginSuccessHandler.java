@@ -1,15 +1,14 @@
 package com.aireview.review.login;
 
 import com.aireview.review.authentication.jwt.Jwt;
+import com.aireview.review.authentication.jwt.JwtConfig;
 import com.aireview.review.authentication.jwt.JwtService;
+import com.aireview.review.config.CookieUtil;
 import com.aireview.review.domains.user.domain.User;
-import com.aireview.review.model.LoginResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,8 +17,8 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public abstract class LoginSuccessHandler implements AuthenticationSuccessHandler {
-    protected final JwtService jwtService;
-    private final ObjectMapper objectMapper;
+    private final JwtConfig jwtConfig;
+    private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -31,18 +30,15 @@ public abstract class LoginSuccessHandler implements AuthenticationSuccessHandle
                 user.getEmail(),
                 authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 
-        LoginResponse loginResponse = new LoginResponse(jwt.getAccessToken(), jwt.getRefreshToken(), userId);
-        writeLoginSuccessResponse(response, loginResponse);
+        setJwtCookie(response, jwt);
+        response.sendRedirect("//ai-review.site/home");
     }
 
     protected abstract User processAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
 
-    private void writeLoginSuccessResponse(HttpServletResponse response, LoginResponse loginResponse) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(
-                objectMapper.writeValueAsString(loginResponse)
-        );
-        response.getWriter().flush();
-        response.getWriter().close();
+
+    private void setJwtCookie(HttpServletResponse response, Jwt jwt) {
+        CookieUtil.addCookie(response, "jwt", jwt.getAccessToken(), jwtConfig.getExpirySeconds());
+        CookieUtil.addCookie(response, "refresh-token", jwt.getRefreshToken(), jwtConfig.getRefreshTokenExpirySeconds());
     }
 }

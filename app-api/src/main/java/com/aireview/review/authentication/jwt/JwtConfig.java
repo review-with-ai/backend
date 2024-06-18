@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 @ConfigurationProperties(prefix = "jwt.token")
 public class JwtConfig {
 
-    private final String header;
+    private final String accessTokenName;
 
     private final String issuer;
 
@@ -17,20 +17,26 @@ public class JwtConfig {
 
     private final int expirySeconds;
 
+    private final String refreshTokenName;
+
     private final int refreshTokenExpirySeconds;
 
+
     @ConstructorBinding
-    public JwtConfig(String header, String issuer, String clientSecret, int expirySeconds, int refreshTokenExpirySeconds) {
+    public JwtConfig(String accessTokenName, String issuer, String clientSecret, int expirySeconds, String refreshTokenName, int refreshTokenExpirySeconds) {
+        Assert.notNull(accessTokenName, "access token name must not be null");
         Assert.notNull(issuer, "issuer must not be null");
         Assert.notNull(clientSecret, "client secret must not be null");
         Assert.isTrue(expirySeconds > 0, "expirySeconds should be greater than 0");
         Assert.isTrue(refreshTokenExpirySeconds > 0 &&
                         refreshTokenExpirySeconds > expirySeconds,
                 "refresh token expiration should be longer than access token expiration");
-        this.header = header;
+        Assert.notNull(refreshTokenName, "refresh token name must not be null");
+        this.accessTokenName = accessTokenName;
         this.issuer = issuer;
         this.clientSecret = clientSecret;
         this.expirySeconds = expirySeconds;
+        this.refreshTokenName = refreshTokenName;
         this.refreshTokenExpirySeconds = refreshTokenExpirySeconds;
     }
 }
