@@ -1,7 +1,7 @@
 package com.aireview.review.domains.category;
 
 
-import com.aireview.review.domains.BaseTimeEntity;
+import com.aireview.review.domains.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(of = {"userId", "title"})
 @ToString
-public class Category extends BaseTimeEntity {
+public class Category extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -56,13 +56,6 @@ secret:
     secret: ${PASSWORD_ENCODER_SECRET}
     salt-length: 16
     iteration: 1234
-jwt:
-  token:
-    header: X-AIREVIEW-AUTH
-    issuer: aireview
-    client-secret: ${JWT_TOKEN_SECRET}
-    expiry-seconds: 6000
-    refresh-token-expiry-seconds: 864000
 slack:
   url: ${SLACK_URL}
 ---
