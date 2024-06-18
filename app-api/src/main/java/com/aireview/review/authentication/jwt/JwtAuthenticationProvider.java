@@ -1,6 +1,6 @@
 package com.aireview.review.authentication.jwt;
 
-import com.aireview.review.authentication.CustomAuthenticatedPrincipal;
+import com.aireview.review.common.Authenticated;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +12,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
+    private static final String ACCESS_TOKEN_EXPIRED_MESSAGE = "액세스 토큰이 만료되었습니다.";
+
+    private static final String ACCESS_TOKEN_VERIFICATION_MESSAGE = "유효하지 않은 토큰입니다.";
+
     private final JwtService jwtService;
-
-    private final String ACCESS_TOKEN_EXPIRED_MESSAGE = "액세스 토큰이 만료되었습니다.";
-
-    private final String ACCESS_TOKEN_VERIFICATION_MESSAGE = "유효하지 않은 토큰입니다.";
 
 
     @Override
@@ -24,7 +24,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         JwtService.Claims claims = null;
         try {
             claims = jwtService.verify((String) authentication.getCredentials());
-
         } catch (TokenExpiredException ex) {
             throw new BadCredentialsException(ACCESS_TOKEN_EXPIRED_MESSAGE);
         } catch (JWTVerificationException ex) {
@@ -32,7 +31,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         }
 
         return JwtAuthenticationToken.authenticated(
-                new CustomAuthenticatedPrincipal(claims.userkey(), claims.email()),
+                new Authenticated(claims.userkey(), claims.email()),
                 AuthorityUtils.createAuthorityList(claims.roles())
         );
     }
