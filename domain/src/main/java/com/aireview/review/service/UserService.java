@@ -6,10 +6,7 @@ import com.aireview.review.domains.user.domain.User;
 import com.aireview.review.domains.user.domain.UserRepository;
 import com.aireview.review.domains.user.exception.DuplicateEmailException;
 import com.aireview.review.domains.user.exception.UserErrorCode;
-import com.aireview.review.validation.UserValidationGroups;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +40,6 @@ public class UserService {
 
         User user = User.of(name, nickname, email, passwordEncoder.encode(password));
 
-        validator.validate(user, Default.class, UserValidationGroups.USER.class);
-
         return userRepository.save(user);
     }
 
@@ -56,8 +50,6 @@ public class UserService {
 
     public User oauthJoin(String name, String nickname, String email, OAuthProvider oauthProvider, String oAuthUserId) {
         User user = User.oauthUserOf(name, nickname, email, oauthProvider, oAuthUserId);
-
-        Set<ConstraintViolation<User>> validate = validator.validate(user, Default.class, UserValidationGroups.OAuthUser.class);
 
         return userRepository.save(user);
     }
