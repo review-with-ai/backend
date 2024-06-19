@@ -68,7 +68,8 @@ public class SubscriptionPaymentService {
     //1회차 결제
     public String ready(Long userId) {
         // TODO: 6/16/24 취소된 사용권있는지 살펴봐야함.
-        Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndStatusIn(userId, Set.of(Subscription.Status.ACTIVE, Subscription.Status.CANCEL));
+        Optional<Subscription> subscription = subscriptionRepository
+                .findByUserIdAndStatusIn(userId, Set.of(Subscription.Status.ACTIVE, Subscription.Status.CANCEL));
 
         if (subscription.isPresent()) {
             throw AlreadySubscribedException.INSTANCE;
@@ -155,8 +156,7 @@ public class SubscriptionPaymentService {
                 savedPayRequest.getSeq(),
                 Payment.EventType.SUCCESS,
                 null,
-                response.getApprovedAt(),
-                newSubscription.getUserId()
+                response.getApprovedAt()
         );
         paymentRepository.save(payment);
 
@@ -174,13 +174,9 @@ public class SubscriptionPaymentService {
     }
 
     // 2회차 이후 결제
-    public void recurringPay(Long userId, Long subscriptionId) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new ResourceNotFoundException(SubscriptionErrorCode.SUBSCRIPTION_NOT_FOUND, subscriptionId.toString()));
-
-        if (!subscription.getUserId().equals(userId)) {
-            throw new NotUserSubscriptionException("subscription " + subscriptionId + "is not owned by user " + userId);
-        }
+    public void recurringPay(Long userId) {
+        Subscription subscription = subscriptionRepository.findByUserIdAndStatus(userId, Subscription.Status.ACTIVE)
+                .orElseThrow(() -> new ResourceNotFoundException(SubscriptionErrorCode.SUBSCRIPTION_NOT_FOUND, "by user id :" + userId));
 
         if (subscription.isCancelled()) {
             throw CancelledSubscriptionException.INSTANCE;
@@ -191,7 +187,7 @@ public class SubscriptionPaymentService {
         }
 
 
-        byte nxtPaymentSeq = (byte) (paymentRepository.findMaxSeqBySubscriptionId(subscriptionId).byteValue() + 1);
+        byte nxtPaymentSeq = (byte) (paymentRepository.findMaxSeqBySubscriptionId(subscription.getId()) + 1);
         String order_id = UUID.randomUUID().toString();
         KakaoPayRecurringPayRequest request = new KakaoPayRecurringPayRequest(
                 cid,
@@ -205,7 +201,7 @@ public class SubscriptionPaymentService {
         KakaoPayRecurringPayResponse response = feign.recurringPay(request);
 
         Payment payment = new Payment(
-                subscriptionId,
+                subscription.getId(),
                 response.getTid(),
                 response.getSid(),
                 response.getPartnerOrderId(),
@@ -213,8 +209,7 @@ public class SubscriptionPaymentService {
                 nxtPaymentSeq,
                 Payment.EventType.SUCCESS,
                 null,
-                response.getApprovedAt(),
-                userId
+                response.getApprovedAt()
         );
         paymentRepository.save(payment);
         applicationEventPublisher.publishEvent(new PaymentSuccessEvent(this, payment));
