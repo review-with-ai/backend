@@ -1,78 +1,80 @@
 package com.aireview.review.authentication.jwt;
 
+import com.aireview.review.config.CookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 
 @Getter
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String AUTHENTICATION_SCHEME_BEARER = "BEARER";
-
-    private static final int AUTHENTICATION_SCHEME_BEARER_LENGTH = 6;
-
-    private final String headerKey;
+    private final String accessTokenCookieName;
 
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationFilter(String headerKey, JwtService jwtService, AuthenticationManager authenticationManager) {
-        this.headerKey = headerKey;
+    private final List<RequestMatcher> excludeRequestMatcher;
+
+    public JwtAuthenticationFilter(
+            String accessTokenCookieName,
+            JwtService jwtService,
+            AuthenticationManager authenticationManager,
+            List<RequestMatcher> excludeRequestMatcher) {
+        this.accessTokenCookieName = accessTokenCookieName;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.excludeRequestMatcher = excludeRequestMatcher;
     }
 
     @Override
     public void afterPropertiesSet() throws ServletException {
-        Assert.notNull(this.headerKey, "HeaderKey is required");
+        Assert.notNull(this.accessTokenCookieName, "access token cookie name is required");
         Assert.notNull(this.jwtService, "jwt is required ");
         Assert.notNull(this.authenticationManager, "authenticationManager is required");
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        JwtAuthenticationToken authRequest = extract(request);
-        if (authRequest == null) {
-            chain.doFilter(request, response);
-            return;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+
+        if (isAuthenticationRequest(request)) {
+            Optional<Cookie> authCookie = extract(request);
+            if (authCookie.isEmpty()) {
+                return;
+            }
+            JwtAuthenticationToken authRequest = JwtAuthenticationToken.unauthenticated(authCookie.get().getValue());
+
+            Authentication authResult = this.getAuthenticationManager().authenticate(authRequest);
+
+            SecurityContextHolder.getContext().setAuthentication(authResult);
         }
-
-        Authentication authResult = this.getAuthenticationManager().authenticate(authRequest);
-
-        SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);
     }
 
-    public JwtAuthenticationToken extract(ServletRequest request) throws ServletException {
-        if (!(request instanceof HttpServletRequest httpRequest)) {
-            throw new ServletException("JwtAuthenticationFilter only supports HTTP request");
-        }
-        String header = httpRequest.getHeader(headerKey);
-        if (header == null) {
-            return null;
-        }
-        header = header.trim();
-        if (!StringUtils.startsWithIgnoreCase(header, AUTHENTICATION_SCHEME_BEARER)) {
-            return null;
-        }
-        if (header.equalsIgnoreCase(AUTHENTICATION_SCHEME_BEARER)) {
-            throw new BadCredentialsException("Empty jwt authentication token");
-        }
-        return JwtAuthenticationToken.unauthenticated(header.substring(AUTHENTICATION_SCHEME_BEARER_LENGTH + 1));
+    private boolean isAuthenticationRequest(HttpServletRequest request) {
+        boolean excluded = excludeRequestMatcher.stream()
+                .anyMatch(requestMatcher -> requestMatcher.matches(request));
+        return request.getCookies() != null &&
+                CookieUtil.containsCookie(request, accessTokenCookieName) &&
+                !excluded;
+    }
+
+    public Optional<Cookie> extract(HttpServletRequest request) {
+        return CookieUtil.getCookie(request, accessTokenCookieName);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.aireview.review.domains.subscription;
 
+import com.aireview.review.domains.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @EqualsAndHashCode(of = {"subscriptionId", "seq"})
 @ToString
-public class Payment {
+public class Payment extends BaseAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,14 +47,11 @@ public class Payment {
     @Column(name = "timestamp", columnDefinition = "datetime", updatable = false, nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(name = "created_by", columnDefinition = "bigint", updatable = false, nullable = false)
-    private Long createdBy;
-
     public enum EventType {
         SUCCESS, FAIL, CANCELLED;
     }
 
-    public Payment(Long subscriptionId, String tid, String sid, String orderId, int amount, byte seq, EventType eventType, String details, LocalDateTime timestamp, Long createdBy) {
+    public Payment(Long subscriptionId, String tid, String sid, String orderId, int amount, byte seq, EventType eventType, String details, LocalDateTime timestamp) {
         this.subscriptionId = subscriptionId;
         this.tid = tid;
         this.sid = sid;
@@ -63,6 +61,5 @@ public class Payment {
         this.eventType = eventType;
         this.details = details;
         this.timestamp = timestamp;
-        this.createdBy = createdBy;
     }
 }

@@ -1,6 +1,6 @@
 package com.aireview.review.domains.subscription;
 
-import com.aireview.review.domains.BaseTimeEntity;
+import com.aireview.review.domains.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.time.LocalTime;
 @Getter
 @EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
-public class Subscription extends BaseTimeEntity {
+public class Subscription extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

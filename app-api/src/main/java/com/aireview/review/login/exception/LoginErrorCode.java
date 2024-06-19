@@ -10,7 +10,8 @@ public enum LoginErrorCode implements ErrorCode {
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "LOGIN_401_2", "잘못된 비밀번호 입니다."),
     OAUTH_FAIL(HttpStatus.UNAUTHORIZED, "LOGIN_401_3", "oauth 인증 실패"),
     LOGIN_FAIL(HttpStatus.UNAUTHORIZED, "LOGIN_401_5", "로그인 실패"),
-    WRONG_LOGIN_REQUEST_FORMAT(HttpStatus.BAD_REQUEST, "LOGIN_401_6", "잘못된 로그인 형식입니다.");
+    WRONG_LOGIN_REQUEST_FORMAT(HttpStatus.UNAUTHORIZED, "LOGIN_401_6", "잘못된 로그인 형식입니다."),
+    JWT_FAIL(HttpStatus.UNAUTHORIZED, "LOGIN_401_7", "토큰 인증에 실패하였습니다.");
 
     private final int status;
     private final String code;

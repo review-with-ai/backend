@@ -1,6 +1,6 @@
 package com.aireview.review.domains.coupon;
 
-import com.aireview.review.domains.BaseTimeEntity;
+import com.aireview.review.domains.BaseAuditEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @EqualsAndHashCode(of = "code")
 @ToString
-public class Coupon extends BaseTimeEntity {
+public class Coupon extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

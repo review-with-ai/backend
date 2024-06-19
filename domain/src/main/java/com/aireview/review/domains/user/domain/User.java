@@ -1,6 +1,6 @@
 package com.aireview.review.domains.user.domain;
 
-import com.aireview.review.domains.BaseTimeEntity;
+import com.aireview.review.domains.BaseAuditEntity;
 import com.aireview.review.validation.Nickname;
 import com.aireview.review.validation.Password;
 import com.aireview.review.validation.UserName;
@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Table(name = "user", indexes = {
         @Index(name = "user_email_idx", columnList = "email", unique = true)
 })
-public class User extends BaseTimeEntity {
+public class User extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
