@@ -1,2 +1,31 @@
-group = 'com.aireview'
-version = '0.0.1-SNAPSHOT'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:3.1.4"
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.4"
+        classpath "io.sentry.jvm.gradle:io.sentry.jvm.gradle.gradle.plugin:4.5.0"
+    }
+}
+
+allprojects {
+    group = 'com.aireview'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+    apply plugin: 'io.sentry.jvm.gradle'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+}
