@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Field;
@@ -40,19 +42,15 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 
-
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfiguration {
-
-    private static final String BEARER_TOKEN_PREFIX = "Bearer";
-    private static final String BEARER_FORMAT = "JWT";
 
     private final JwtConfig jwtConfig;
 
     private final ApplicationContext applicationContext;
 
-    @Value("${swagger.host}")
+    @Value("${server.host}")
     private String host;
 
     @Bean
@@ -64,7 +62,11 @@ public class SwaggerConfiguration {
                 .info(new Info()
                         .title("ai review 프로젝트 REST API 명세서")
                         .version("v1"))
-                .components(new Components().addSchemas("ErrorResponse", errorResponseSchema()));
+                .components(
+                        new Components()
+                                .addSchemas("ErrorResponse", errorResponseSchema())
+                                .addHeaders("JwtSetCookieHeader", setAuthenticationCookieHeader())
+                );
     }
 
     private Schema<ErrorResponse> errorResponseSchema() {
@@ -81,11 +83,11 @@ public class SwaggerConfiguration {
     @Bean
     public SecurityScheme securityScheme() {
         return new SecurityScheme()
-                .name(jwtConfig.getHeader())
-                .type(SecurityScheme.Type.HTTP)
-                .scheme(BEARER_TOKEN_PREFIX)
-                .bearerFormat(BEARER_FORMAT);
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.COOKIE)
+                .name(jwtConfig.getAccessTokenName());
     }
+
 
     /**
      * 필터에서 처리되는 요청 Open API 추가
@@ -95,9 +97,9 @@ public class SwaggerConfiguration {
     public OpenApiCustomizer addLoginOpenAPI() {
         return openApi -> {
             openApi
-                    .addTagsItem(new Tag().name("Authentication").description("로그인"))
-                    .path("/login", loginPathItem())
-                    .path("/oauth2/authorization/{providerId}", oauthLoginPathItem());
+                    .addTagsItem(new Tag().name("인증").description("로그인 관련 API"))
+                    .path("/api/v1/login", loginPathItem())
+                    .path("/api/v1/oauth2/authorization/{providerId}", oauthLoginPathItem());
         };
     }
 
@@ -107,18 +109,15 @@ public class SwaggerConfiguration {
                 .description("Email/PW 로그인 요청")
                 .type("object")
                 .addProperty("email", new Schema().type("string").description("이메일").example("hong24@gmail.com"))
-                .addProperty("password", new Schema().type("string").description("패스워드").example("hongpass24"));
+                .addProperty("password", new Schema().type("string").description("패스워드").example("hongpass24!!"));
 
         Map<String, LoginErrorCode> possibleLoginErrorCodes = new HashMap<>();
-        possibleLoginErrorCodes.put("이메일_오류", LoginErrorCode.WRONG_EMAIL);
-        possibleLoginErrorCodes.put("비밀번호_오류", LoginErrorCode.WRONG_PASSWORD);
-        possibleLoginErrorCodes.put("요청_형식_오류", LoginErrorCode.WRONG_LOGIN_REQUEST_FORMAT);
-        possibleLoginErrorCodes.put("기타_오류", LoginErrorCode.LOGIN_FAIL);
+        possibleLoginErrorCodes.put("로그인 실패", LoginErrorCode.LOGIN_FAIL);
 
         ApiResponses apiResponses = loginResponses(possibleLoginErrorCodes);
 
         return new PathItem().post(new Operation()
-                .tags(List.of("Authentication"))
+                .tags(List.of("인증"))
                 .summary("Email/PW 로그인")
                 .description("일반 회원가입 유저의 로그인")
                 .requestBody(new RequestBody().content(new Content()
@@ -126,11 +125,20 @@ public class SwaggerConfiguration {
                 .responses(apiResponses));
     }
 
+    private Header setAuthenticationCookieHeader() {
+        Header setCookieHeader = new Header();
+        setCookieHeader.setSchema(new Schema<String>()
+                .example("jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiYWlyZXZpZXciLCJuYW1lIjoic29vMTNAZW1haWwuY29tIiwiZXhwIjoxNzE4Njk2MzY0LCJpYXQiOjE3MTg2OTAzNjQsInVzZXJLZXkiOjExfQ.BCYUeyEfeAfI29IDEs_y51PUE3JsmuX5TWmaxn5a4ymM08q_JvLDO9vzzIVhR5M5HvwRx0eXmTo-Ak7-Lx3zIg; Path=/; Max-Age=6000; Expires=Tue, 18 Jun 2024 07:39:24 GMT; HttpOnly;" +
+                        "refresh-token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiYWlyZXZpZXciLCJuYW1lIjoic29vMTNAZW1haWwuY29tIiwiZXhwIjoxNzE5NTU0MzY0LCJpYXQiOjE3MTg2OTAzNjQsInVzZXJLZXkiOjExfQ.FaomQAHnB4yQ78DKsaW4NIkmotqxft_6ZdcXJv4bL1h2dPw6Hjk5AFT8lkAQsAWpuA-JI5U1E7S7qlcPIOU87g; Path=/; Max-Age=864000; Expires=Fri, 28 Jun 2024 05:59:24 GMT; HttpOnly"));
+        return setCookieHeader;
+    }
+
     private ApiResponses loginResponses(Map<String, LoginErrorCode> possibleLoginErrorCodes) {
         ApiResponses responses = new ApiResponses()
-                .addApiResponse("200", new ApiResponse().content(new Content()
-                        .addMediaType("application/json",
-                                new MediaType().schema(new Schema<>().$ref("#/components/schemas/LoginResponse")))));
+                .addApiResponse("200", new ApiResponse()
+                        .description("로그인 성공 - jwt 액세스 토큰, 리프레시 토큰 쿠키 발급")
+                        .headers(Map.of(HttpHeaders.SET_COOKIE, setAuthenticationCookieHeader()))
+                );
 
         Map<Integer, List<ExampleHolder>> statusWithExampleHolder = possibleLoginErrorCodes
                 .entrySet().stream()
@@ -152,14 +160,14 @@ public class SwaggerConfiguration {
                 .schema(new Schema().type("string")._enum(List.of("naver", "kakao")));
 
         Map<String, LoginErrorCode> possibleLoginErrorCodes = new HashMap<>();
-        possibleLoginErrorCodes.put("OAUTH_인증_오류", LoginErrorCode.OAUTH_FAIL);
+        possibleLoginErrorCodes.put("로그인 실패", LoginErrorCode.LOGIN_FAIL);
 
 
         ApiResponses apiResponses = loginResponses(possibleLoginErrorCodes);
 
 
         return new PathItem().get(new Operation()
-                .tags(List.of("Authentication"))
+                .tags(List.of("인증"))
                 .summary("OAuth 회원 가입 및 로그인 - 카카오, 네이버")
                 .description("첫 인증 시 회원가입. 이후 로그인")
                 .addParametersItem(parameter)
