@@ -35,3 +35,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: start latest docker image
+        uses: nekiro/ssh-job@main
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.KEY }}
+          user: ${{ secrets.USER }}
+          command: |
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d

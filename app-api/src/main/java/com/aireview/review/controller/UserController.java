@@ -66,4 +66,9 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException(UserErrorCode.NOT_FOUND, auth.getUserId().toString()));
         return user;
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "테스트 성공";
+    }
 }
