@@ -46,8 +46,6 @@ jwt:
     expiry-seconds: 6000
     refresh-token-expiry-seconds: 864000
     refresh-token-name: refresh-token
-
-
 ---
 spring:
   config:
