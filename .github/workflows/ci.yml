@@ -39,8 +39,10 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
           echo "$SSH_PEM_KEY" > $HOME/key.pem
-          chmod 400 $HOME/key.pem
-          sshpass -p "$SERVER_SECRET" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST '~/script.sh'
+          chmod 600 $HOME/key.pem
+          sshpass -p "$SERVER_SECRET" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST << 'ENDSSH'
+          '~/script.sh'
+          ENDSSH
         env:
           SSH_USER: ${{ secrets.USER }}
           SSH_HOST: ${{ secrets.HOST }}
