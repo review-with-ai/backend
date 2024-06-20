@@ -111,25 +111,11 @@ public class SecurityConfiguration {
             CorsConfigurationSource corsConfigurationSource,
             List<RequestMatcher> excludeAuthenticationRequestMatchers
     ) throws Exception {
-        // TODO: 4/29/24 CSRF,CORS 설정 필요
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(excludeAuthenticationRequestMatchers.toArray(new RequestMatcher[]{})).permitAll()
-//                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/manage/health").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/manage/beans").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/manage/metrics/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/manage/env").permitAll()
-//
-//                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/refresh-token").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/payment/approve").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/payment/fail").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/payment/cancel").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -154,7 +140,8 @@ public class SecurityConfiguration {
                 new AntPathRequestMatcher("/api/v1/users", HttpMethod.POST.name()),
                 new AntPathRequestMatcher("/api/v1/subscriptions/payment/approve", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/api/v1/subscriptions/payment/fail", HttpMethod.GET.name()),
-                new AntPathRequestMatcher("/api/v1/subscriptions/payment/cancel", HttpMethod.GET.name())
+                new AntPathRequestMatcher("/api/v1/subscriptions/payment/cancel", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/api/v1/users/test", HttpMethod.GET.name())
         );
     }
 
