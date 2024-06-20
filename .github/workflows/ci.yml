@@ -38,13 +38,9 @@ jobs:
       - name: ssh and start new image
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
-          echo $SSH_USER
-          echo $SSH_HOST
-          echo $SSH_PORT
-          echo $SERVER_SECRET
           echo "$SSH_PEM_KEY" > $HOME/key.pem
           chmod 400 $HOME/key.pem
-          sshpass -p "$SERVER_SECRET" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST << 'ENDSSH'
+          sshpass -p "$SERVER_SECRET" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p 1024 root@118.67.133.240 << 'ENDSSH'
           ~/script.sh
           ENDSSH
         env:
