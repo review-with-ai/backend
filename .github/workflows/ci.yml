@@ -1,7 +1,7 @@
 name: Java CI with Gradle(api)
 
 on:
-  pull_request:
+  push:
     branches: [ "dev" ]
 
 jobs:
@@ -37,9 +37,10 @@ jobs:
 
       - name: ssh and start new image
         run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
           echo "$SSH_PEM_KEY" > $HOME/key.pem
           chmod 400 $HOME/key.pem
-          sshpass -p "T6fY8?e%eiTny" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p 1024 root@45.119.145.83 << 'ENDSSH'
+          sshpass -p "$SERVER_SECRET" ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST << 'ENDSSH'
           ~/script.sh
           ENDSSH
         env:
@@ -47,3 +48,4 @@ jobs:
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PEM_KEY: ${{ secrets.KEY }}
           SSH_PORT: ${{ secrets.PORT}}
+          SERVER_SECRET: ${{ secrets.SERVER_SECRET }}
