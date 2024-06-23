@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Where;
 
 @Entity
 @NoArgsConstructor
@@ -28,6 +29,7 @@ public class Category extends BaseAuditEntity {
     @Column(name = "order", columnDefinition = "tinyint", nullable = false)
     private Byte order;
 
+    @Where(clause = "is_deleted=false")
     @Column(name = "is_deleted", columnDefinition = "tinyint(1)", nullable = false)
     private boolean isDeleted;
 

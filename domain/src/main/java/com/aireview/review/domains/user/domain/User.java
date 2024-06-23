@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Where;
 
 @Entity
 @NoArgsConstructor
@@ -63,6 +64,7 @@ public class User extends BaseAuditEntity {
     @Column(name = "status", columnDefinition = "enum('ENABLED','BLOCKED','DELETED')", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Where(clause = "status = 'ENABLED'")
     private Status status;
 
     public Long getId() {
@@ -134,7 +136,7 @@ public class User extends BaseAuditEntity {
         this.status = status;
     }
 
-    public void updateSubscriptionStatus(boolean hasSubscribed){
+    public void updateSubscriptionStatus(boolean hasSubscribed) {
         this.hasSubscribed = hasSubscribed;
     }
 }
