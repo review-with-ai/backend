@@ -1,8 +1,11 @@
 package com.aireview.review.authentication.jwt;
 
+import com.aireview.review.authentication.jwt.exception.NotEligibleUserException;
 import com.aireview.review.authentication.jwt.exception.RefreshTokenExpiredException;
 import com.aireview.review.authentication.jwt.exception.RefreshTokenNotIssuedByApp;
 import com.aireview.review.authentication.jwt.exception.RefreshTokenNotValidException;
+import com.aireview.review.domains.user.domain.User;
+import com.aireview.review.service.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -36,8 +39,10 @@ public class JwtService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final UserService userService;
 
-    public JwtService(JwtConfig config, RefreshTokenRepository refreshTokenRepository) {
+
+    public JwtService(JwtConfig config, RefreshTokenRepository refreshTokenRepository, UserService userService) {
         this.accessTokenName = config.getAccessTokenName();
         this.refreshTokenName = config.getRefreshTokenName();
         this.issuer = config.getIssuer();
@@ -49,6 +54,7 @@ public class JwtService {
                 .withIssuer(issuer)
                 .build();
         this.refreshTokenRepository = refreshTokenRepository;
+        this.userService = userService;
     }
 
     public Jwt createJwt(Long userId, String email, String[] roles) {
@@ -66,13 +72,18 @@ public class JwtService {
     public Jwt refreshToken(String refreshToken) {
         try {
             Claims claims = verify(refreshToken);
+
             String originalRefreshToken = refreshTokenRepository.findById(claims.userKey)
                     .orElseThrow(() -> RefreshTokenNotValidException.INSTANCE);
             if (!originalRefreshToken.equals(refreshToken)) {
                 deleteRefreshToken(claims.userKey);
                 throw RefreshTokenNotValidException.INSTANCE;
             }
-            return createJwt(claims.userKey, claims.email, claims.roles);
+
+            User user = userService.findUser(claims.userKey)
+                    .orElseThrow(() -> NotEligibleUserException.INSTANCE);
+
+            return createJwt(user.getId(), user.getEmail(), claims.roles);
         } catch (TokenExpiredException expiredException) {
             throw RefreshTokenExpiredException.INSTANCE;
         } catch (JWTVerificationException exception) {
