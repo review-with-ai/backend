@@ -32,11 +32,12 @@ public class TokenController {
             headers = @Header(name = HttpHeaders.SET_COOKIE, ref = "#/components/headers/JwtSetCookieHeader"))
     @ApiExceptionExample(RefreshTokenPossibleExceptions.class)
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-
         String refreshToken = CookieUtil.getCookie(request, jwtService.getRefreshTokenName())
                 .orElseThrow(() -> RefreshTokenNotFoundException.INSTANCE)
                 .getValue();
+
         Jwt jwt = jwtService.refreshToken(refreshToken);
+
         CookieUtil.addCookie(response, jwtService.getAccessTokenName(), jwt.getAccessToken(), jwtService.getExpirySeconds());
         CookieUtil.addCookie(response, jwtService.getRefreshTokenName(), jwt.getRefreshToken(), jwtService.getRefreshTokenExpirySeconds());
     }

@@ -17,7 +17,9 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public abstract class LoginSuccessHandler implements AuthenticationSuccessHandler {
+
     private final JwtConfig jwtConfig;
+
     private final JwtService jwtService;
 
     @Override

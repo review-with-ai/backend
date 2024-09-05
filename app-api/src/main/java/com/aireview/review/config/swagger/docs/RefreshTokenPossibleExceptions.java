@@ -1,9 +1,6 @@
 package com.aireview.review.config.swagger.docs;
 
-import com.aireview.review.authentication.jwt.exception.RefreshTokenExpiredException;
-import com.aireview.review.authentication.jwt.exception.RefreshTokenNotFoundException;
-import com.aireview.review.authentication.jwt.exception.RefreshTokenNotIssuedByApp;
-import com.aireview.review.authentication.jwt.exception.RefreshTokenNotValidException;
+import com.aireview.review.authentication.jwt.exception.*;
 import com.aireview.review.common.exception.AiReviewException;
 import com.aireview.review.config.swagger.ExplainError;
 import org.springframework.stereotype.Component;
@@ -22,4 +19,7 @@ public class RefreshTokenPossibleExceptions implements PossibleExceptions {
 
     @ExplainError("쿠키에 리프레시 토큰이 없음")
     public final AiReviewException 리프레시_토큰_쿠키_없음 = RefreshTokenNotFoundException.INSTANCE;
+
+    @ExplainError("유저가 BLOCKED 혹은 DELETED 상태로 토큰 재발급 자격 없음")
+    public final AiReviewException 활성화_되지_않은_유저 = NotEligibleUserException.INSTANCE;
 }

@@ -1,9 +1,15 @@
 package com.aireview.review.authentication.jwt.exception;
 
 public class RefreshTokenNotValidException extends RefreshTokenException {
-    public static RefreshTokenNotValidException INSTANCE = new RefreshTokenNotValidException(RefreshTokenErrorCode.TOKEN_NOT_VALID);
+    private static final RefreshTokenErrorCode errorCode = RefreshTokenErrorCode.TOKEN_NOT_VALID;
+
+    public static RefreshTokenNotValidException INSTANCE = new RefreshTokenNotValidException(errorCode);
 
     private RefreshTokenNotValidException(RefreshTokenErrorCode errorCode) {
         super(errorCode);
+    }
+
+    public RefreshTokenNotValidException(String message) {
+        super(errorCode, message);
     }
 }
